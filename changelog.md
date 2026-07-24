@@ -6,6 +6,9 @@
 - Added module directories for membership, identity, genealogy, BuddyPress, treasury, grants, housing, governance, certificates, and volunteers.
 - Added dedicated directories for admin code, shared includes, assets, templates, documentation, screenshots, and tests.
 - Added modular bootstrap and loader scaffolding.
+- Added the authoritative INO Platform Capability Specification covering public, member, administrative, institutional, community, security, reporting, integration, and mobile requirements.
+- Added a machine-readable capability registry with operational, in-development, planned, and experimental status controls.
+- Established the production rule that features cannot be represented as operational until implemented, documented, tested, permission-controlled, and repeatable.
 - Preserved the existing v1.2.0 root implementation during migration.
 
 ## 1.2.0
