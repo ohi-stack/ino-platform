@@ -1,15 +1,15 @@
 <?php
 /**
  * Plugin Name: INO Platform Plugin
- * Description: Integrated administration, membership, identity, heritage, genealogy, social connections, grants, housing, documents, governance, and public portal tools for the Indigenous Nation of Onegodia.
- * Version: 1.2.0
+ * Description: Integrated administration, membership, identity, heritage, genealogy, social connections, programs, volunteers, housing, grants, documents, certificates, communications, and public portal tools for the Indigenous Nation of Onegodia.
+ * Version: 1.3.0
  * Author: OneGodian
  * Text Domain: ino-platform
  */
 
 if (!defined('ABSPATH')) { exit; }
 
-define('INO_PLATFORM_VERSION', '1.2.0');
+define('INO_PLATFORM_VERSION', '1.3.0');
 define('INO_PLATFORM_PATH', plugin_dir_path(__FILE__));
 define('INO_PLATFORM_URL', plugin_dir_url(__FILE__));
 
