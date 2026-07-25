@@ -4,7 +4,7 @@ Official WordPress platform for the **Indigenous Nation of Onegodia**, including
 
 ## Current Release
 
-**Version 1.2.0**
+**Version 1.3.0**
 
 ## Core Capabilities
 
@@ -21,6 +21,26 @@ Official WordPress platform for the **Indigenous Nation of Onegodia**, including
 - Document and governance registries
 - Duplicate-safe automatic page generation
 - INO navy, cream, gold, white, and deep-red branding
+- Institutional Community Programs page and program registry
+- Public program application form with tracking codes
+- Member program-application dashboard
+- Administrative review and decision workflow
+- Program status history, eligibility, document requirements, and reporting metrics
+
+## Community Programs Module
+
+The `/ino-community-programs/` page now provides:
+
+- Official INO institutional content
+- Active program registry with permanent program codes
+- Family Support, Youth Development, Elder Support, Education, Cultural Preservation, Volunteer Service, Community Development, and Economic & Workforce Development records
+- Public program application form
+- Logged-in participant dashboard
+- Program-manager and administrator review dashboard
+- Workflow stages for submission, screening, documents, review, decision, enrollment, completion, and closure
+- Structured application, program, document, and workflow database tables
+- Role-based access and nonce-protected form actions
+- Clear statements that applications do not guarantee acceptance, funding, housing, employment, service, or placement
 
 ## Automatic Pages
 
@@ -52,15 +72,7 @@ The plugin generates the following WordPress pages when they do not already exis
 
 ## BuddyPress Integration
 
-When BuddyPress is active, the plugin uses BuddyPress for:
-
-- Friend requests and connections
-- Member avatars
-- Cover images
-- Member profile navigation
-- Family & Connections profile tab
-
-When BuddyPress is inactive, INO uses its own connection and family relationship tables.
+When BuddyPress is active, the plugin uses BuddyPress for friend requests, member avatars, cover images, member profile navigation, and the Family & Connections profile tab. When BuddyPress is inactive, INO uses its own connection and family relationship tables.
 
 ## Identity Classification Notice
 
@@ -74,7 +86,7 @@ Ancestral declarations are stored with evidence and review classifications. INO 
 4. Upload the ZIP and replace the older version when prompted.
 5. Activate the plugin.
 6. Review **INO Platform → Dashboard** and the automatically generated pages.
-7. Optionally install and activate BuddyPress.
+7. Open `/ino-community-programs/` to verify the registry, application form, dashboards, and workflow controls.
 
 ## Repository Structure
 
@@ -85,14 +97,15 @@ ino-platform/
 │   ├── class-ino-platform-activator.php
 │   ├── class-ino-platform-admin.php
 │   ├── class-ino-platform-shortcodes.php
-│   └── class-ino-platform-social.php
+│   ├── class-ino-platform-social.php
+│   └── class-ino-platform-community.php
 ├── README.md
 └── README.txt
 ```
 
 ## Development Rule
 
-A feature should not be represented as operational until it is fully implemented, documented, tested, and repeatable.
+A feature should not be represented as operational until it is fully implemented, documented, tested, permission-controlled, and repeatable.
 
 ## Author and Originator
 
