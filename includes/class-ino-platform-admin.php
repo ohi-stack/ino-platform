@@ -19,6 +19,7 @@ class INO_Platform_Admin {
             'ino-platform-housing'=>'Housing Projects',
             'ino-platform-documents'=>'Documents',
             'ino-platform-governance'=>'Governance',
+            'ino-platform-doctrines'=>'Doctrines',
             'ino-platform-forms'=>'Forms',
             'ino-platform-reports'=>'Reports',
             'ino-platform-buddypress'=>'BuddyPress Integration',
@@ -52,7 +53,7 @@ class INO_Platform_Admin {
             'Housing Projects'=>(int)$wpdb->get_var("SELECT COUNT(*) FROM {$p}ino_housing_projects"),
             'Documents'=>(int)$wpdb->get_var("SELECT COUNT(*) FROM {$p}ino_documents")
         );
-        echo '<div class="ino-admin"><div class="ino-hero"><div class="ino-kicker">Indigenous Nation of Onegodia</div><h1>INO Platform Command Dashboard</h1><p>Membership, identity, genealogy, community connections, grants, housing, documents, and governance in one control panel.</p></div><div class="ino-grid">';
+        echo '<div class="ino-admin"><div class="ino-hero"><div class="ino-kicker">Indigenous Nation of Onegodia</div><h1>INO Platform Command Dashboard</h1><p>Membership, identity, genealogy, community connections, grants, housing, documents, governance, and doctrine records in one control panel.</p></div><div class="ino-grid">';
         foreach ($counts as $label=>$count) { echo '<div class="ino-card"><strong>'.esc_html($count).'</strong><p>'.esc_html($label).'</p></div>'; }
         echo '</div><div class="ino-panel"><h2>Operational Status</h2><p><span class="ino-badge">Plugin active</span> Version '.esc_html(INO_PLATFORM_VERSION).'</p><p>BuddyPress: <strong>'.(INO_Platform_Social::buddyPress_active()?'Active — native social features enabled':'Inactive — INO fallback social features enabled').'</strong></p><p>Automatic pages: <strong>'.count((array)get_option('ino_platform_page_ids',array())).'</strong></p></div></div>';
     }

@@ -4,7 +4,7 @@ Official WordPress platform for the **Indigenous Nation of Onegodia**, including
 
 ## Current Release
 
-**Version 1.2.0**
+**Version 1.3.0**
 
 ## Core Capabilities
 
@@ -19,6 +19,7 @@ Official WordPress platform for the **Indigenous Nation of Onegodia**, including
 - Treasury and grants tracking
 - Housing project tracking
 - Document and governance registries
+- INO Doctrines public module with twenty foundational doctrine statements and status safeguards
 - Duplicate-safe automatic page generation
 - INO navy, cream, gold, white, and deep-red branding
 
@@ -47,6 +48,7 @@ The plugin generates the following WordPress pages when they do not already exis
 - `/ino-housing-development/`
 - `/ino-document-registry/`
 - `/ino-governance/`
+- `/ino-doctrines/`
 - `/ino-community-programs/`
 - `/ino-contact/`
 

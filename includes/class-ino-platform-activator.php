@@ -128,6 +128,7 @@ class INO_Platform_Activator {
             'ino-housing-development' => array('INO Housing Development','[ino_housing]'),
             'ino-document-registry' => array('INO Document Registry','[ino_documents]'),
             'ino-governance' => array('INO Governance','[ino_governance]'),
+            'ino-doctrines' => array('INO Doctrines','[ino_doctrines]'),
             'ino-community-programs' => array('INO Community Programs','[ino_community]'),
             'ino-contact' => array('Contact INO','[ino_contact_form]')
         );

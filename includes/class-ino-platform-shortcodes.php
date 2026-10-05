@@ -9,7 +9,7 @@ class INO_Platform_Shortcodes {
             'ino_identity_intro'=>'identity_intro','ino_identity_declaration'=>'identity_declaration','ino_identity_dashboard'=>'identity_dashboard',
             'ino_book_of_names'=>'book_of_names','ino_family_archives'=>'family_archives','ino_certificates'=>'certificates','ino_verify_identity'=>'verify_identity',
             'ino_identity_standards'=>'identity_standards','ino_treasury_grants'=>'treasury_grants','ino_housing'=>'housing','ino_documents'=>'documents',
-            'ino_governance'=>'governance','ino_community'=>'community','ino_contact_form'=>'contact'
+            'ino_governance'=>'governance','ino_doctrines'=>'doctrines','ino_community'=>'community','ino_contact_form'=>'contact'
         );
         foreach ($map as $tag=>$method) { add_shortcode($tag, array(__CLASS__, $method)); }
         add_action('wp_enqueue_scripts', array(__CLASS__, 'assets'));
@@ -37,6 +37,38 @@ class INO_Platform_Shortcodes {
     public static function housing() { return self::simple('Housing Development','<p>Track properties, readiness tasks, partners, funding sources, project milestones, construction phases, and occupancy status.</p>'); }
     public static function documents() { return self::simple('Document Registry','<p>Organize institutional documents, versions, approval records, classifications, and public or restricted access.</p>'); }
     public static function governance() { return self::simple('Governance','<p>Maintain constitutions, charters, bylaws, policies, resolutions, meeting records, and institutional history.</p>'); }
+    public static function doctrines() {
+        $doctrines = array(
+            'Doctrine of One God' => 'There is One God, singular and undivided, as the foundational theological principle of OneGodian identity.',
+            'Doctrine of Relationship to One God' => 'Human identity is understood in relationship to One God as the divine source.',
+            'Doctrine of Resemblance to One God' => 'Members are called to cultivate truth, justice, love, wisdom, order, creativity, responsibility, mercy, and constructive conduct.',
+            'Doctrine of Belonging to One God' => 'Identity, purpose, conscience, and ultimate accountability are understood under One God.',
+            'Doctrine of Creator-Human Distinction' => 'OneGodian identity does not mean that a person is God, equal to God, or a replacement for God.',
+            'Doctrine of OneGodian Identity' => 'OneGodian describes religious relationship through origin, moral resemblance, belonging, consciousness, conduct, covenant, and spiritual alignment.',
+            'Doctrine of Direct Spiritual Belonging' => 'Relationship with One God is not defined exclusively by denomination, prophet, ethnic lineage, or inherited religious label.',
+            'Doctrine of Religious Coexistence' => 'OneGodian identity may coexist with a person’s continuing religious, cultural, ancestral, or national identity.',
+            'Doctrine of Identity Without Erasure' => 'Participation does not require abandonment of ancestry, family history, nationality, language, culture, tribal affiliation, or religious background.',
+            'Doctrine of Ancestral Preservation' => 'Members may preserve ancestry, lineage, cultural traditions, oral histories, language, geographic origins, and supporting records.',
+            'Doctrine of Truthful Identity Records' => 'Identity evidence must distinguish self-declared, family-attested, document-supported, institutionally reviewed, pending, and unverified information.',
+            'Doctrine of Voluntary Membership and Covenant' => 'INO membership is a voluntary religious and institutional relationship maintained separately from external civil status.',
+            'Doctrine of Religious Peoplehood' => 'INO may define and maintain its own religious membership community within its internal doctrine and records.',
+            'Doctrine of Spiritual Responsibility Through Conduct' => 'OneGodian identity carries responsibilities of consciousness, conduct, service, purpose, moral alignment, and accountability.',
+            'Doctrine of Community and Family Preservation' => 'Family connection, cultural memory, spiritual responsibility, community well-being, and institutional continuity are protected values.',
+            'Doctrine of Service' => 'Service, education, preservation, family support, volunteerism, and constructive action are practical expressions of religious responsibility.',
+            'Doctrine of Religious and Spiritual Learning' => 'INO supports religious education, teachings, sacred writings, gatherings, observances, fellowship, reflection, and service.',
+            'Doctrine of Institutional Integrity' => 'INO religious, cultural, membership, governance, and community functions remain distinct from ONEGODIAN, LLC commercial functions.',
+            'Doctrine of Internal and External Status Distinction' => 'INO membership and internal records do not by themselves alter government citizenship, nationality, immigration status, external tribal enrollment, property title, or other civil classifications.',
+            'Doctrine of One Family and Human Unity' => 'The One God principle supports a religious ethic of human relationship, dignity, responsibility, and unity.'
+        );
+        $html = '<section class="ino-shell"><div class="ino-heading"><span>Faith & Institutional Doctrine</span><h1>INO Doctrines</h1></div><div class="ino-notice">These doctrines state INO’s internal religious and institutional beliefs. They do not create governmental, tribal, territorial, or civil status.</div><div class="ino-public-grid">';
+        $n = 1;
+        foreach ($doctrines as $title => $statement) {
+            $html .= '<article class="ino-card-public"><span class="ino-muted">Doctrine '.esc_html($n).'</span><h3>'.esc_html($title).'</h3><p>'.esc_html($statement).'</p></article>';
+            $n++;
+        }
+        return $html.'</div></section>';
+    }
+
     public static function community() { return self::simple('Community Programs','<p>Coordinate education, cultural preservation, volunteer service, family support, housing, workforce, and economic-development initiatives.</p>'); }
     public static function contact() { return self::simple('Contact INO','<p>Use the official contact channels published by the Indigenous Nation of Onegodia.</p>'); }
     public static function identity_intro() { return self::simple('Honor Your Origin. Preserve Your Name. Join Without Erasure.','<p>Members may document their ancestry, family history, cultural identity, language, and community affiliations while maintaining their voluntary INO membership identity.</p><div class="ino-notice">An INO record does not by itself establish external governmental or tribal recognition.</div>'); }
