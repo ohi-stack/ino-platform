@@ -24,3 +24,15 @@
 @media(max-width:900px){.ino-gov-public .ino-gov-public-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:650px){.ino-gov-admin .ino-gov-form{grid-template-columns:1fr}.ino-gov-admin .ino-gov-form label:nth-child(6){grid-column:auto}.ino-gov-public .ino-gov-public-grid{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){.ino-gov-public .ino-gov-tile,.ino-gov-admin *{transition:none!important;animation:none!important}}
+
+.ino-gov-admin .ino-gov-status-chart{display:grid;gap:17px;margin-top:20px}
+.ino-gov-admin .ino-gov-status-row{display:grid;grid-template-columns:145px minmax(0,1fr) minmax(180px,1fr);gap:15px;align-items:center}
+.ino-gov-admin .ino-gov-status-row strong{color:#0D2B45}
+.ino-gov-admin .ino-gov-status-track{display:flex;overflow:hidden;background:#edf1f3;border-radius:999px;height:14px;width:100%}
+.ino-gov-admin .ino-gov-status-part{height:100%;min-width:0;transition:width .45s ease}
+.ino-gov-admin .ino-gov-status-draft{background:#98AFC1}
+.ino-gov-admin .ino-gov-status-reviewed{background:#C99A2E}
+.ino-gov-admin .ino-gov-status-published{background:#22745F}
+.ino-gov-admin .ino-gov-status-withdrawn{background:#A5070A}
+@media(max-width:950px){.ino-gov-admin .ino-gov-status-row{grid-template-columns:1fr;gap:7px}}
+@media(prefers-reduced-motion:reduce){.ino-gov-admin .ino-gov-status-part{transition:none!important}}
