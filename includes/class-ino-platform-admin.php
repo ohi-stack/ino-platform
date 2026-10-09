@@ -47,7 +47,7 @@ class INO_Platform_Admin {
     }
 
     public static function assets($hook) {
-        if (strpos((string) $hook, 'ino-platform') === false) { return; }
+        if (strpos((string) $hook, 'ino-platform') === false && strpos((string) $hook, 'ino-governance') === false) { return; }
         $style = 'assets/css/ino-admin-command.css';
         $script = 'assets/js/ino-admin-command.js';
         wp_enqueue_style(
