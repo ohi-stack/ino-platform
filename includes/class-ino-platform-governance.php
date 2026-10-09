@@ -244,6 +244,9 @@ class INO_Platform_Governance {
             }
             $values = array('status'=>'reviewed','reviewed_by'=>get_current_user_id(),'reviewed_at'=>$now,'updated_at'=>$now);
         } elseif ($action === 'publish') {
+            if (empty($_POST['publish_attestation']) || (string)$_POST['publish_attestation'] !== '1') {
+                wp_die('Publication requires an explicit authority attestation.', '', array('response'=>400));
+            }
             if ($record->status !== 'reviewed' || !$record->reviewed_by) {
                 wp_die('Only reviewed records may be published.', '', array('response'=>409));
             }
@@ -486,6 +489,9 @@ class INO_Platform_Governance {
         echo '<input type="hidden" name="action" value="ino_gov_transition"><input type="hidden" name="record_id" value="' . esc_attr($id) . '"><input type="hidden" name="transition" value="' . esc_attr($action) . '">';
         wp_nonce_field('ino_gov_transition', 'ino_gov_nonce');
         if ($note_required) { echo '<label class="screen-reader-text" for="gov-note-' . esc_attr($id) . '">Review note for record ' . esc_html($id) . '</label><textarea id="gov-note-' . esc_attr($id) . '" name="note" required minlength="12" placeholder="Evidence review note" rows="2"></textarea>'; }
+        if ($action === 'publish') {
+            echo '<label class="ino-gov-attestation"><input type="checkbox" name="publish_attestation" value="1" required> I attest I am authorized to publish this reviewed INO record.</label>';
+        }
         echo '<button type="submit" class="ino-gov-action">' . esc_html($label) . '</button></form>';
     }
 }
