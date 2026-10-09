@@ -136,6 +136,9 @@ class INO_Platform_Activator {
             'ino-housing-development' => array('INO Housing Development','[ino_housing]'),
             'ino-document-registry' => array('INO Document Registry','[ino_documents]'),
             'ino-governance' => array('INO Governance','[ino_governance]'),
+            'ino-constitution' => array('INO Constitution Registry','[ino_constitution]'),
+            'ino-governance-structure' => array('INO Governance Structure','[ino_governance_structure]'),
+            'ino-public-records' => array('INO Public Governance Records','[ino_governance_records]'),
             'ino-community-programs' => array('INO Community Programs','[ino_community]'),
             'ino-contact' => array('Contact INO','[ino_contact_form]')
         );
