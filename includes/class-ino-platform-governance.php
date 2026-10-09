@@ -81,6 +81,9 @@ class INO_Platform_Governance {
             $role = get_role($slug);
             if ($role) {
                 foreach ($role_data[1] as $cap => $value) { $role->add_cap($cap, $value); }
+                foreach (array('ino_governance_view','ino_governance_edit','ino_governance_review','ino_governance_publish') as $candidate) {
+                    if (!isset($role_data[1][$candidate])) { $role->remove_cap($candidate); }
+                }
                 // Avoid carrying accidental site-wide powers from older definitions.
                 foreach (array('manage_options', 'edit_users', 'upload_files', 'edit_posts') as $cap) {
                     $role->remove_cap($cap);
@@ -371,10 +374,15 @@ class INO_Platform_Governance {
         $rows = self::public_items('office');
         $html = '<section class="ino-shell ino-gov-public"><div class="ino-heading"><span>INO Governance</span><h1>Institutional Structure</h1></div>';
         if (!$rows) { return $html . '<p class="ino-member-notice">No office structures have completed authorized review and publication.</p></section>'; }
+        $names = array();
+        foreach ($rows as $office) { $names[(int)$office->id] = $office->title; }
         foreach ($rows as $record) {
-            $html .= '<article class="ino-gov-tile"><h2>' . esc_html($record->title) . '</h2><p>' . esc_html($record->summary) . '</p><p>Authority reference: ' . esc_html($record->source_ref) . '</p></article>';
+            $parent = $record->parent_id && isset($names[(int)$record->parent_id]) ? $names[(int)$record->parent_id] : '';
+            $html .= '<article class="ino-gov-tile"><h2>' . esc_html($record->title) . '</h2><p>' . esc_html($record->summary) . '</p><p>Authority reference: ' . esc_html($record->source_ref) . '</p>';
+            if ($parent) { $html .= '<p>Reports within: <strong>' . esc_html($parent) . '</strong></p>'; }
+            $html .= '</article>';
         }
-        return $html . '<p class="ino-member-notice">This directory describes offices, not verified current officeholders or appointments.</p></section>';
+        return $html . '<p class="ino-member-notice">This directory describes documented offices, not independently verified current officeholders or appointments.</p></section>';
     }
 
     public static function records_shortcode() {
@@ -408,6 +416,20 @@ class INO_Platform_Governance {
             echo '<div class="ino-card"><span class="ino-value">' . esc_html(number_format_i18n($total)) . '</span><span class="ino-label">' . esc_html($label) . '</span><span class="ino-card-foot">' . esc_html($published) . ' published after review</span></div>';
         }
         echo '<div class="ino-card"><span class="ino-value">' . esc_html(number_format_i18n(count($all))) . '</span><span class="ino-label">Recent records loaded</span><span class="ino-card-foot">At most 100, not the overall record total</span></div></div>';
+        echo '<section class="ino-panel"><h2>Governance workflow distribution</h2><p class="ino-panel-help">Stored record counts by state, not approvals, voting percentages or activity forecasts.</p><div class="ino-gov-status-chart" role="group" aria-label="Record status counts by category">';
+        foreach (array('constitution'=>'Constitution','office'=>'Offices','record'=>'Other records') as $type=>$name) {
+            $draft = isset($counts[$type]['draft']) ? (int)$counts[$type]['draft'] : 0;
+            $reviewed = isset($counts[$type]['reviewed']) ? (int)$counts[$type]['reviewed'] : 0;
+            $published = isset($counts[$type]['published']) ? (int)$counts[$type]['published'] : 0;
+            $withdrawn = isset($counts[$type]['withdrawn']) ? (int)$counts[$type]['withdrawn'] : 0;
+            $denominator = max(1,$draft+$reviewed+$published+$withdrawn);
+            echo '<div class="ino-gov-status-row"><strong>' . esc_html($name) . '</strong><div class="ino-gov-status-track" aria-hidden="true">';
+            foreach (array('draft'=>$draft,'reviewed'=>$reviewed,'published'=>$published,'withdrawn'=>$withdrawn) as $status=>$value) {
+                if ($value) { echo '<span class="ino-gov-status-part ino-gov-status-' . esc_attr($status) . '" style="width:' . esc_attr(round($value*100/$denominator, 3)) . '%"></span>'; }
+            }
+            echo '</div><span class="ino-caption">' . esc_html(sprintf('Draft %d · Reviewed %d · Published %d · Withdrawn %d',$draft,$reviewed,$published,$withdrawn)) . '</span></div>';
+        }
+        echo '</div></section>';
 
         if (current_user_can('ino_governance_edit')) {
             echo '<section class="ino-panel"><h2>Create governance draft</h2><p class="ino-panel-help">Use only source-supported descriptions. New records are not adopted, authenticated, or published automatically. Documents must already be safe for public access before attaching through the WordPress Media Library.</p>';
@@ -443,7 +465,14 @@ class INO_Platform_Governance {
             }
             echo '</td></tr>';
         }
-        echo '</tbody></table></div><p class="ino-note">WordPress administrators receive draft-entry rights for technical setup. Review and publication require separately assigned governance capabilities. Publishing does not determine the Constitution’s legal validity or authenticate historic signatures.</p></section></main>';
+        echo '</tbody></table></div><p class="ino-note">WordPress administrators receive draft-entry rights for technical setup. Review and publication require separately assigned governance capabilities. Publishing does not determine the Constitution’s legal validity or authenticate historic signatures.</p></section>';
+        $audit_rows = $wpdb->get_results("SELECT item_id,event,actor_id,note,occurred_at FROM " . $wpdb->prefix . self::AUDIT_SUFFIX . " ORDER BY id DESC LIMIT 25");
+        echo '<section class="ino-panel"><h2>Recent institutional audit activity</h2><p class="ino-panel-help">Recorded governance events restricted to authorized INO personnel.</p><div class="ino-gov-table-wrap"><table class="ino-table"><thead><tr><th>When</th><th>Record ID</th><th>Event</th><th>Actor</th><th>Evidence note</th></tr></thead><tbody>';
+        if (!$audit_rows) { echo '<tr><td colspan="5">No recorded governance events.</td></tr>'; }
+        foreach ((array)$audit_rows as $event) {
+            echo '<tr><td>' . esc_html($event->occurred_at) . '</td><td>' . esc_html($event->item_id) . '</td><td>' . esc_html(str_replace('_',' ',$event->event)) . '</td><td>' . esc_html($event->actor_id) . '</td><td>' . esc_html($event->note) . '</td></tr>';
+        }
+        echo '</tbody></table></div></section></main>';
     }
 
     private static function action_form($id, $action, $label, $note_required) {
