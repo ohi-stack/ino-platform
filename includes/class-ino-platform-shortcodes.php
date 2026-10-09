@@ -47,39 +47,74 @@ class INO_Platform_Shortcodes {
     public static function verify_identity() { return self::simple('Verify Identity Record','<p>Public verification tools can confirm that an INO record exists and show the permitted public status without exposing restricted evidence.</p>'); }
 
     public static function member_directory() {
-        $users = get_users(array('number'=>60,'orderby'=>'display_name','order'=>'ASC'));
+        global $wpdb;
+        $ids = $wpdb->get_col("SELECT DISTINCT user_id FROM {$wpdb->prefix}ino_members WHERE user_id IS NOT NULL AND public_consent = 1 AND LOWER(status) = 'approved' LIMIT 60");
+        if (!$ids) {
+            return self::simple('Member Directory', '<p>No member profiles have been approved for public listing.</p>');
+        }
+        $users = get_users(array('include'=>array_map('intval', $ids), 'orderby'=>'display_name', 'order'=>'ASC'));
         $html = '<section class="ino-shell"><div class="ino-heading"><span>People of Onegodia</span><h1>Member Directory</h1></div><div class="ino-public-grid">';
         foreach ($users as $user) {
-            $name = get_user_meta($user->ID,'ino_preferred_name',true); if (!$name) { $name=$user->display_name; }
-            $identity = get_user_meta($user->ID,'ino_ancestral_identity',true);
-            $html .= '<div class="ino-card-public">'.INO_Platform_Social::avatar($user->ID,120).'<h3>'.esc_html($name).'</h3><p class="ino-muted">'.esc_html($identity).'</p><a class="ino-btn ino-btn-navy" href="'.esc_url(add_query_arg('member',$user->ID,home_url('/member-profile/'))).'">View Profile</a></div>';
+            $name = get_user_meta($user->ID, 'ino_preferred_name', true);
+            if (!$name) { $name = $user->display_name; }
+            $html .= '<div class="ino-card-public">'.INO_Platform_Social::avatar($user->ID,120).'<h3>'.esc_html($name).'</h3><a class="ino-btn ino-btn-navy" href="'.esc_url(add_query_arg('member',$user->ID,home_url('/member-profile/'))).'">View Profile</a></div>';
         }
         return $html.'</div></section>';
     }
 
     public static function member_profile($atts=array()) {
+        global $wpdb;
         $user_id = isset($_GET['member']) ? absint($_GET['member']) : (isset($atts['user_id']) ? absint($atts['user_id']) : get_current_user_id());
-        $user = get_userdata($user_id); if (!$user) { return '<div class="ino-notice">Member not found.</div>'; }
-        $name = get_user_meta($user_id,'ino_preferred_name',true); if (!$name) { $name=$user->display_name; }
+        $user = get_userdata($user_id);
+        if (!$user) { return '<div class="ino-notice">Member not found.</div>'; }
+        $is_self = is_user_logged_in() && get_current_user_id() === $user_id;
+        $is_staff = current_user_can('manage_options');
+        $public_consent = (bool) $wpdb->get_var($wpdb->prepare(
+            "SELECT 1 FROM {$wpdb->prefix}ino_members WHERE user_id = %d AND public_consent = 1 AND LOWER(status) = 'approved' LIMIT 1",
+            $user_id
+        ));
+        if (!$is_self && !$is_staff && !$public_consent) {
+            return '<div class="ino-notice">This member profile is private or unavailable.</div>';
+        }
+        $name = get_user_meta($user_id,'ino_preferred_name',true);
+        if (!$name) { $name = $user->display_name; }
         $cover = INO_Platform_Social::cover($user_id);
         $style = $cover ? ' style="background-image:url('.esc_url($cover).')"' : '';
-        $fields = array('Declared ancestral identity'=>'ino_ancestral_identity','Tribe, nation, clan, or community'=>'ino_tribe_clan','Family or lineage'=>'ino_family_lineage','Homeland'=>'ino_homeland','Language or tradition'=>'ino_language','INO classification'=>'ino_membership_class','Membership number'=>'ino_membership_number');
-        $html='<section class="ino-shell"><div class="ino-profile"><div class="ino-cover"'.$style.'></div><div class="ino-profile-body"><div class="ino-profile-avatar">'.INO_Platform_Social::avatar($user_id,150).'</div><h1>'.esc_html($name).'</h1>';
-        foreach($fields as $label=>$key){$v=get_user_meta($user_id,$key,true);if($v){$html.='<p><strong>'.esc_html($label).':</strong> '.esc_html($v).'</p>';}}
-        if(is_user_logged_in() && get_current_user_id()!==$user_id){$html.='<form method="post"><input type="hidden" name="ino_social_action" value="connect"><input type="hidden" name="target_user" value="'.esc_attr($user_id).'">'.wp_nonce_field('ino_social_action','_ino_nonce',true,false).'<button class="ino-btn ino-btn-gold">Connect</button></form>';}
+        $html = '<section class="ino-shell"><div class="ino-profile"><div class="ino-cover"'.$style.'></div><div class="ino-profile-body"><div class="ino-profile-avatar">'.INO_Platform_Social::avatar($user_id,150).'</div><h1>'.esc_html($name).'</h1>';
+        if ($is_self || $is_staff) {
+            $fields = array('Declared ancestral identity'=>'ino_ancestral_identity','Tribe, nation, clan, or community'=>'ino_tribe_clan','Family or lineage'=>'ino_family_lineage','Homeland'=>'ino_homeland','Language or tradition'=>'ino_language','INO classification'=>'ino_membership_class','Membership number'=>'ino_membership_number');
+            foreach ($fields as $label=>$key) {
+                $value = get_user_meta($user_id, $key, true);
+                if ($value) { $html .= '<p><strong>'.esc_html($label).':</strong> '.esc_html($value).'</p>'; }
+            }
+        }
+        if (is_user_logged_in() && get_current_user_id() !== $user_id) {
+            $html .= '<form method="post"><input type="hidden" name="ino_social_action" value="connect"><input type="hidden" name="target_user" value="'.esc_attr($user_id).'">'.wp_nonce_field('ino_social_action','_ino_nonce',true,false).'<button class="ino-btn ino-btn-gold">Connect</button></form>';
+        }
         return $html.'</div></div></section>';
     }
 
     public static function people_network() { return self::simple('People Network','<p>Discover member connections, family relationships, clan links, and community affiliations. BuddyPress friendships are used when available.</p>'); }
 
     public static function family_tree($atts=array()) {
+        if (!is_user_logged_in()) { return '<div class="ino-notice">Please log in to view family records.</div>'; }
         global $wpdb;
         $user_id = isset($atts['user_id']) ? absint($atts['user_id']) : get_current_user_id();
-        if (!$user_id) { return '<div class="ino-notice">Log in or select a member to view a family tree.</div>'; }
-        $rows=$wpdb->get_results($wpdb->prepare("SELECT * FROM {$wpdb->prefix}ino_family_relationships WHERE (person_a=%d OR person_b=%d) AND status IN ('pending','approved') ORDER BY created_at DESC",$user_id,$user_id));
-        $html='<section class="ino-shell"><div class="ino-heading"><span>Genealogy</span><h1>Family Tree & Relationships</h1></div><div class="ino-tree-list">';
-        if(!$rows){$html.='<div class="ino-notice">No family relationships have been recorded yet.</div>';}
-        foreach($rows as $row){$other=((int)$row->person_a===$user_id)?(int)$row->person_b:(int)$row->person_a;$u=get_userdata($other);if(!$u){continue;}$html.='<div class="ino-tree-item"><strong>'.esc_html($u->display_name).'</strong><br>'.esc_html(ucwords(str_replace('_',' ',$row->relationship_type))).' · '.esc_html($row->status).' · '.esc_html($row->verification_status).'</div>';}
+        if ($user_id !== get_current_user_id() && !current_user_can('manage_options')) {
+            return '<div class="ino-notice">Family records are private to the member and authorized staff.</div>';
+        }
+        $rows = $wpdb->get_results($wpdb->prepare(
+            "SELECT * FROM {$wpdb->prefix}ino_family_relationships WHERE (person_a=%d OR person_b=%d) AND status='approved' ORDER BY created_at DESC",
+            $user_id, $user_id
+        ));
+        $html = '<section class="ino-shell"><div class="ino-heading"><span>Genealogy</span><h1>Family Tree & Relationships</h1></div><div class="ino-tree-list">';
+        if (!$rows) { $html .= '<div class="ino-notice">No approved relationships are available.</div>'; }
+        foreach ($rows as $row) {
+            $other = ((int)$row->person_a === $user_id) ? (int)$row->person_b : (int)$row->person_a;
+            $user = get_userdata($other);
+            if (!$user) { continue; }
+            $html .= '<div class="ino-tree-item"><strong>'.esc_html($user->display_name).'</strong><br>'.esc_html(ucwords(str_replace('_',' ',$row->relationship_type))).' · '.esc_html($row->status).'</div>';
+        }
         return $html.'</div></section>';
     }
 
@@ -87,9 +122,9 @@ class INO_Platform_Shortcodes {
         if (!is_user_logged_in()) { return '<div class="ino-notice">Please log in to submit an identity declaration.</div>'; }
         global $wpdb;
         if (!empty($_POST['ino_identity_submit']) && isset($_POST['_ino_identity_nonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['_ino_identity_nonce'])),'ino_identity_submit')) {
-            $wpdb->insert($wpdb->prefix.'ino_identity_declarations',array('user_id'=>get_current_user_id(),'ancestral_people'=>sanitize_text_field(wp_unslash($_POST['ancestral_people']??'')),'tribe_nation_clan'=>sanitize_text_field(wp_unslash($_POST['tribe_nation_clan']??'')),'family_lineage'=>sanitize_text_field(wp_unslash($_POST['family_lineage']??'')),'homeland'=>sanitize_text_field(wp_unslash($_POST['homeland']??'')),'language_tradition'=>sanitize_text_field(wp_unslash($_POST['language_tradition']??'')),'family_narrative'=>sanitize_textarea_field(wp_unslash($_POST['family_narrative']??'')),'preferred_wording'=>sanitize_textarea_field(wp_unslash($_POST['preferred_wording']??'')),'verification_status'=>sanitize_text_field(wp_unslash($_POST['verification_status']??'Self-declared')),'privacy_level'=>sanitize_text_field(wp_unslash($_POST['privacy_level']??'private'))));
+            $wpdb->insert($wpdb->prefix.'ino_identity_declarations',array('user_id'=>get_current_user_id(),'ancestral_people'=>sanitize_text_field(wp_unslash($_POST['ancestral_people']??'')),'tribe_nation_clan'=>sanitize_text_field(wp_unslash($_POST['tribe_nation_clan']??'')),'family_lineage'=>sanitize_text_field(wp_unslash($_POST['family_lineage']??'')),'homeland'=>sanitize_text_field(wp_unslash($_POST['homeland']??'')),'language_tradition'=>sanitize_text_field(wp_unslash($_POST['language_tradition']??'')),'family_narrative'=>sanitize_textarea_field(wp_unslash($_POST['family_narrative']??'')),'preferred_wording'=>sanitize_textarea_field(wp_unslash($_POST['preferred_wording']??'')),'verification_status'=>'Self-declared','privacy_level'=>sanitize_text_field(wp_unslash($_POST['privacy_level']??'private'))));
         }
-        return '<section class="ino-shell"><div class="ino-heading"><span>Identity & Heritage</span><h1>Identity Declaration</h1></div><form method="post" class="ino-form">'.wp_nonce_field('ino_identity_submit','_ino_identity_nonce',true,false).'<input type="hidden" name="ino_identity_submit" value="1"><label>Original or ancestral people<input name="ancestral_people"></label><label>Tribe, nation, clan, or community<input name="tribe_nation_clan"></label><label>Family or lineage name<input name="family_lineage"></label><label>Homeland or country of origin<input name="homeland"></label><label>Language or cultural tradition<input name="language_tradition"></label><label>Family narrative<textarea name="family_narrative" rows="5"></textarea></label><label>Preferred identity wording<textarea name="preferred_wording" rows="3"></textarea></label><label>Evidence classification<select name="verification_status"><option>Self-declared</option><option>Family-attested</option><option>Document-supported</option><option>Pending documentation</option></select></label><label>Privacy<select name="privacy_level"><option value="private">Private</option><option value="members">Members only</option><option value="public_summary">Public summary</option></select></label><button class="ino-btn ino-btn-gold">Submit Declaration</button></form><div class="ino-notice">This record does not independently establish enrollment or recognition by an external government, agency, genealogical authority, or tribal nation.</div></section>';
+        return '<section class="ino-shell"><div class="ino-heading"><span>Identity & Heritage</span><h1>Identity Declaration</h1></div><form method="post" class="ino-form">'.wp_nonce_field('ino_identity_submit','_ino_identity_nonce',true,false).'<input type="hidden" name="ino_identity_submit" value="1"><label>Original or ancestral people<input name="ancestral_people"></label><label>Tribe, nation, clan, or community<input name="tribe_nation_clan"></label><label>Family or lineage name<input name="family_lineage"></label><label>Homeland or country of origin<input name="homeland"></label><label>Language or cultural tradition<input name="language_tradition"></label><label>Family narrative<textarea name="family_narrative" rows="5"></textarea></label><label>Preferred identity wording<textarea name="preferred_wording" rows="3"></textarea></label><p>Initial evidence classification: Self-declared. Independent review is a separate process.</p><label>Privacy<select name="privacy_level"><option value="private">Private</option><option value="members">Members only</option><option value="public_summary">Public summary</option></select></label><button class="ino-btn ino-btn-gold">Submit Declaration</button></form><div class="ino-notice">This record does not independently establish enrollment or recognition by an external government, agency, genealogical authority, or tribal nation.</div></section>';
     }
 
     public static function identity_dashboard() {
