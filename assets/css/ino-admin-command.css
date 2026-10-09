@@ -1,0 +1,82 @@
+/* INO Platform Command UI — scoped administrative design, candidate 1.3 */
+.ino-admin{--ino-navy:#0D2B45;--ino-deep:#071B2D;--ino-title:#102B45;--ino-red:#A5070A;--ino-gold:#C99A2E;--ino-light-gold:#E2C56F;--ino-cream:#F3E7BD;--ino-soft:#FAF4DF;--ino-border:#dce5e9;--ino-muted:#577080;--ino-radius:18px;max-width:1480px;margin:24px 20px 56px 0;color:var(--ino-title);font-size:14px}
+.ino-admin *{box-sizing:border-box}
+.ino-admin a{text-decoration:none}
+.ino-admin a:focus-visible,.ino-admin button:focus-visible{outline:3px solid var(--ino-red);outline-offset:3px}
+.ino-admin button{font:inherit;cursor:pointer}
+.ino-admin .ino-shell-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}
+.ino-admin .ino-wordmark{display:flex;align-items:center;gap:12px;color:var(--ino-deep);font-size:14px;font-weight:800}
+.ino-admin .ino-mark{display:grid;place-items:center;width:44px;height:44px;border-radius:14px;background:var(--ino-navy);color:var(--ino-light-gold);font-size:19px;font-weight:900;border:1px solid var(--ino-gold)}
+.ino-admin .ino-caption{color:var(--ino-muted);font-size:12px;font-weight:600}
+.ino-admin .ino-hero{position:relative;isolation:isolate;overflow:hidden;border-radius:24px;padding:42px;background:radial-gradient(circle at 85% 18%,rgba(226,197,111,.19),transparent 27%),linear-gradient(130deg,var(--ino-deep),var(--ino-navy) 60%,#153f5b);color:#fff;box-shadow:0 22px 58px rgba(7,27,45,.14)}
+.ino-admin .ino-hero:before{content:"";position:absolute;right:-95px;top:-185px;width:500px;height:500px;border:1px solid rgba(226,197,111,.3);border-radius:50%;box-shadow:0 0 0 62px rgba(226,197,111,.04),0 0 0 126px rgba(226,197,111,.035);z-index:-1;animation:ino-breathe 8s ease-in-out infinite alternate}
+.ino-admin .ino-hero:after{content:"";position:absolute;width:12px;height:12px;right:15%;top:19%;border-radius:50%;background:var(--ino-light-gold);box-shadow:0 0 20px rgba(226,197,111,.8);animation:ino-float 5s ease-in-out infinite}
+.ino-admin .ino-kicker{font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--ino-light-gold)}
+.ino-admin .ino-hero h1{font-size:clamp(29px,4vw,43px);line-height:1.12;color:#fff;max-width:680px;margin:12px 0 12px;font-weight:800}
+.ino-admin .ino-hero p{max-width:675px;color:#e5edf2;line-height:1.7;font-size:15px;margin:0}
+.ino-admin .ino-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+.ino-admin .ino-btn{display:inline-flex;align-items:center;justify-content:center;padding:11px 16px;border-radius:10px;border:1px solid transparent;font-weight:800;transition:transform .2s ease,box-shadow .2s ease,background-color .2s ease;line-height:1.4}
+.ino-admin .ino-btn:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.12)}
+.ino-admin .ino-btn-primary{background:var(--ino-navy);color:#fff}
+.ino-admin .ino-btn-gold{background:var(--ino-gold);color:var(--ino-deep)}
+.ino-admin .ino-btn-light{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.4);color:#fff}
+.ino-admin .ino-subnav{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.ino-admin .ino-subnav a{padding:10px 14px;background:#fff;border:1px solid var(--ino-border);border-radius:10px;color:var(--ino-navy);font-weight:700;transition:border-color .2s,transform .2s}
+.ino-admin .ino-subnav a:hover{border-color:var(--ino-gold);transform:translateY(-1px)}
+.ino-admin .ino-section-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:30px 0 13px}
+.ino-admin .ino-section-heading h2{font-size:20px;color:var(--ino-title);margin:0}
+.ino-admin .ino-section-heading p{color:var(--ino-muted);margin:5px 0 0;font-size:13px}
+.ino-admin .ino-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:0}
+.ino-admin .ino-card{position:relative;background:#fff;border:1px solid var(--ino-border);border-radius:var(--ino-radius);padding:21px;min-width:0;box-shadow:0 8px 28px rgba(15,45,64,.045);transition:transform .2s,box-shadow .2s,border-color .2s}
+.ino-admin .ino-card:hover{transform:translateY(-3px);border-color:#d3b360;box-shadow:0 15px 28px rgba(15,45,64,.1)}
+.ino-admin .ino-card:before{content:"";display:block;height:3px;width:39px;background:var(--ino-gold);border-radius:5px;margin-bottom:15px}
+.ino-admin .ino-card:nth-child(4n + 2):before{background:#4a8892}
+.ino-admin .ino-card:nth-child(4n + 3):before{background:var(--ino-red)}
+.ino-admin .ino-card:nth-child(4n):before{background:var(--ino-navy)}
+.ino-admin .ino-card .ino-value{display:block;font-size:clamp(27px,3vw,37px);font-weight:850;color:var(--ino-deep);line-height:1.25;font-variant-numeric:tabular-nums}
+.ino-admin .ino-card .ino-label{display:block;font-size:13px;margin-top:7px;color:var(--ino-muted);font-weight:700}
+.ino-admin .ino-card .ino-card-foot{font-size:11px;color:#647a83;margin-top:17px}
+.ino-admin .ino-panels{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,1fr);gap:16px;margin-top:16px}
+.ino-admin .ino-panel{background:#fff;border:1px solid var(--ino-border);border-radius:var(--ino-radius);padding:24px;min-width:0;box-shadow:0 8px 28px rgba(15,45,64,.04)}
+.ino-admin .ino-panel h2,.ino-admin .ino-panel h3{margin:0 0 6px;color:var(--ino-title)}
+.ino-admin .ino-panel h2{font-size:19px}
+.ino-admin .ino-panel .ino-panel-help{font-size:12px;color:var(--ino-muted);margin:0 0 18px;line-height:1.6}
+.ino-admin .ino-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:16px 0}
+.ino-admin .ino-tabs button{background:#f5f8f8;border:1px solid var(--ino-border);border-radius:999px;color:var(--ino-navy);padding:7px 12px;font-size:12px;font-weight:750}
+.ino-admin .ino-tabs button[aria-pressed="true"]{background:var(--ino-navy);color:#fff;border-color:var(--ino-navy)}
+.ino-admin .ino-chart{min-height:236px}
+.ino-admin .ino-chart svg{display:block;width:100%;height:auto;overflow:visible}
+.ino-admin .ino-chart .ino-axis{stroke:#e4e9eb;stroke-width:1}
+.ino-admin .ino-chart .ino-area{fill:rgba(201,154,46,.13)}
+.ino-admin .ino-chart .ino-line{fill:none;stroke:var(--ino-gold);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;animation:ino-draw .75s ease both}
+.ino-admin .ino-chart .ino-point{fill:var(--ino-navy);stroke:#fff;stroke-width:2}
+.ino-admin .ino-chart .ino-axis-label{font-size:11px;fill:#667b86}
+.ino-admin .ino-empty{padding:35px 10px;background:#f8fafb;border-radius:14px;text-align:center;color:var(--ino-muted)}
+.ino-admin .ino-metric-legend{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--ino-muted)}
+.ino-admin .ino-metric-legend:before{content:"";width:9px;height:9px;background:var(--ino-gold);border-radius:50%}
+.ino-admin .ino-status-list{padding:0;margin:12px 0 0;list-style:none}
+.ino-admin .ino-status-list li{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid #e8ecef}
+.ino-admin .ino-status-list li:last-child{border-bottom:0}
+.ino-admin .ino-status-list strong{color:var(--ino-deep)}
+.ino-admin .ino-badge{display:inline-flex;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:750;background:#f4f0e1;color:#745319}
+.ino-admin .ino-badge.info{background:#e8f2f7;color:#1b5875}
+.ino-admin .ino-badge.draft{background:#f9e9e8;color:#842c26}
+.ino-admin .ino-module-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.ino-admin .ino-module-card{display:block;background:#fff;border:1px solid var(--ino-border);border-radius:14px;padding:19px;color:var(--ino-title);transition:transform .2s,border-color .2s}
+.ino-admin .ino-module-card:hover{border-color:var(--ino-gold);transform:translateY(-2px)}
+.ino-admin .ino-module-card strong{display:block;font-size:14px}
+.ino-admin .ino-module-card span{display:block;color:var(--ino-muted);font-size:12px;margin-top:6px}
+.ino-admin .ino-note{background:var(--ino-soft);border-left:4px solid var(--ino-gold);padding:16px;margin-top:18px;line-height:1.65;border-radius:0 12px 12px 0}
+.ino-admin .ino-table{width:100%;border-collapse:collapse}
+.ino-admin .ino-table th,.ino-admin .ino-table td{padding:12px 8px;border-bottom:1px solid #e7ebef;text-align:left}
+.ino-admin .ino-table th{color:var(--ino-muted);font-size:12px}
+.ino-admin details{margin-top:15px}
+.ino-admin summary{cursor:pointer;color:var(--ino-navy);font-weight:700}
+.ino-admin .ino-empty-action{background:#f7f9fa;border:1px dashed #ccd7dd;padding:23px;border-radius:12px;line-height:1.7}
+@keyframes ino-breathe{to{transform:scale(1.075);opacity:.65}}
+@keyframes ino-float{50%{transform:translateY(14px);opacity:.55}}
+@keyframes ino-draw{from{stroke-dasharray:1000;stroke-dashoffset:1000}to{stroke-dasharray:1000;stroke-dashoffset:0}}
+@media(max-width:1150px){.ino-admin .ino-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ino-admin .ino-module-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:850px){.ino-admin .ino-panels{grid-template-columns:1fr}.ino-admin .ino-hero{padding:30px}.ino-admin .ino-module-grid{grid-template-columns:1fr}}
+@media(max-width:540px){.ino-admin{margin-right:12px}.ino-admin .ino-grid{grid-template-columns:1fr}.ino-admin .ino-shell-head{flex-wrap:wrap}.ino-admin .ino-hero{padding:24px}.ino-admin .ino-panel{padding:19px}.ino-admin .ino-section-heading{align-items:flex-start;flex-direction:column}}
+@media(prefers-reduced-motion:reduce){.ino-admin *, .ino-admin *:before,.ino-admin *:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
