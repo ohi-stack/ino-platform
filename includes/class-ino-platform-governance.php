@@ -117,7 +117,7 @@ class INO_Platform_Governance {
     }
 
     private static function admin_url() {
-        return admin_url('admin.php?page=ino-platform-governance');
+        return admin_url('admin.php?page=ino-governance');
     }
 
     private static function redirect_notice($message) {
@@ -265,7 +265,7 @@ class INO_Platform_Governance {
     }
 
     public static function assets($hook) {
-        if (strpos((string)$hook, 'ino-platform-governance') === false) { return; }
+        if (strpos((string)$hook, 'ino-platform-governance') === false && strpos((string)$hook, 'ino-governance') === false) { return; }
         wp_enqueue_style('ino-governance-foundation', INO_PLATFORM_URL . 'assets/css/ino-governance-foundation.css',
             array('ino-platform-admin-command'), INO_PLATFORM_VERSION);
     }
@@ -306,7 +306,7 @@ class INO_Platform_Governance {
         foreach (array(
             array('Constitution Registry','/ino-constitution/','Review published constitutional versions'),
             array('Organizational Structure','/ino-governance-structure/','Explore documented INO office structures'),
-            array('Public Governance Records','/ino-public-records/','Search published institutional record summaries')
+            array('Public Governance Records','/ino-public-records/','Browse published institutional record summaries')
         ) as $link) {
             $html .= '<article class="ino-gov-tile"><h2>' . esc_html($link[0]) . '</h2><p>' . esc_html($link[2]) . '</p><a href="' . esc_url(home_url($link[1])) . '">Explore records ↗</a></article>';
         }
