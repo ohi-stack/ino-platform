@@ -17,6 +17,7 @@ class INO_Platform_Governance {
         add_action('admin_post_ino_gov_save', array(__CLASS__, 'save'));
         add_action('admin_post_ino_gov_transition', array(__CLASS__, 'transition'));
         add_action('admin_enqueue_scripts', array(__CLASS__, 'assets'));
+        add_action('wp_enqueue_scripts', array(__CLASS__, 'public_assets'));
         add_shortcode('ino_governance_dashboard', array(__CLASS__, 'dashboard_shortcode'));
         add_shortcode('ino_constitution', array(__CLASS__, 'constitution_shortcode'));
         add_shortcode('ino_governance_structure', array(__CLASS__, 'structure_shortcode'));
@@ -103,7 +104,7 @@ class INO_Platform_Governance {
 
     private static function log_event($id, $event, $note) {
         global $wpdb;
-        $wpdb->insert($wpdb->prefix . self::AUDIT_SUFFIX, array(
+        return $wpdb->insert($wpdb->prefix . self::AUDIT_SUFFIX, array(
             'item_id'=>(int)$id, 'event'=>$event, 'actor_id'=>get_current_user_id(),
             'note'=>$note, 'occurred_at'=>current_time('mysql')
         ), array('%d','%s','%d','%s','%s'));
@@ -205,9 +206,17 @@ class INO_Platform_Governance {
             'visibility'=>$visibility, 'status'=>'draft', 'created_by'=>get_current_user_id(),
             'created_at'=>$now, 'updated_at'=>$now
         );
+        $wpdb->query('START TRANSACTION');
         $result = $wpdb->insert(self::table(), $data);
-        if (!$result) { wp_die('Record could not be saved; check the unique reference.', '', array('response'=>409)); }
-        self::log_event((int)$wpdb->insert_id, 'created_draft', 'Draft record created. No governance authority is conferred.');
+        if (!$result) {
+            $wpdb->query('ROLLBACK');
+            wp_die('Record could not be saved; check the unique reference.', '', array('response'=>409));
+        }
+        if (!self::log_event((int)$wpdb->insert_id, 'created_draft', 'Draft record created. No governance authority is conferred.')) {
+            $wpdb->query('ROLLBACK');
+            wp_die('Audit recording failed; draft creation rolled back.', '', array('response'=>500));
+        }
+        $wpdb->query('COMMIT');
         self::redirect_notice('Draft saved; it has not been reviewed or published.');
     }
 
@@ -251,16 +260,32 @@ class INO_Platform_Governance {
                     wp_die('The parent office must be published before a subordinate office.', '', array('response'=>400));
                 }
             }
+            if ($record->record_type === 'constitution') {
+                $pdf_path = get_attached_file((int)$record->attachment_id);
+                if (!$pdf_path || !is_file($pdf_path) || !is_readable($pdf_path) ||
+                    get_post_mime_type((int)$record->attachment_id) !== 'application/pdf' ||
+                    !hash_equals((string)$record->document_hash, (string)hash_file('sha256', $pdf_path))) {
+                    wp_die('The constitutional attachment is missing or changed since it was registered.', '', array('response'=>409));
+                }
+            }
             $values = array('status'=>'published','published_by'=>get_current_user_id(),'published_at'=>$now,'updated_at'=>$now);
         } else {
             if ($record->status !== 'draft') { wp_die('Only drafts may be withdrawn in Phase 1.', '', array('response'=>409)); }
             $values = array('status'=>'withdrawn','updated_at'=>$now);
         }
+        $wpdb->query('START TRANSACTION');
         $result = $wpdb->update(self::table(), $values, array(
             'id'=>$id,'status'=>$record->status
         ));
-        if ($result !== 1) { wp_die('Record changed during processing. Reload the page.', '', array('response'=>409)); }
-        self::log_event($id, $action, $note);
+        if ($result !== 1) {
+            $wpdb->query('ROLLBACK');
+            wp_die('Record changed during processing. Reload the page.', '', array('response'=>409));
+        }
+        if (!self::log_event($id, $action, $note)) {
+            $wpdb->query('ROLLBACK');
+            wp_die('Audit recording failed; state transition rolled back.', '', array('response'=>500));
+        }
+        $wpdb->query('COMMIT');
         self::redirect_notice('Governance record moved to ' . ($action === 'review' ? 'reviewed' : ($action === 'publish' ? 'published' : 'withdrawn')) . '.');
     }
 
@@ -268,6 +293,11 @@ class INO_Platform_Governance {
         if (strpos((string)$hook, 'ino-platform-governance') === false && strpos((string)$hook, 'ino-governance') === false) { return; }
         wp_enqueue_style('ino-governance-foundation', INO_PLATFORM_URL . 'assets/css/ino-governance-foundation.css',
             array('ino-platform-admin-command'), INO_PLATFORM_VERSION);
+    }
+
+    public static function public_assets() {
+        wp_enqueue_style('ino-governance-foundation', INO_PLATFORM_URL . 'assets/css/ino-governance-foundation.css',
+            array('ino-platform-public-design'), INO_PLATFORM_VERSION);
     }
 
     private static function counts() {
