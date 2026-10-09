@@ -239,8 +239,8 @@ class INO_Platform_Governance {
         if ($action === 'review') {
             if ($record->status !== 'draft') { wp_die('Only drafts can be reviewed.', '', array('response'=>409)); }
             if (strlen(trim($note)) < 12) { wp_die('Provide a substantive review note.', '', array('response'=>400)); }
-            if ($record->record_type !== 'record' && !$record->source_ref) {
-                wp_die('Constitution and office records require an authority source reference.', '', array('response'=>400));
+            if (!$record->source_ref) {
+                wp_die('Every reviewed governance record requires a documented source reference.', '', array('response'=>400));
             }
             $values = array('status'=>'reviewed','reviewed_by'=>get_current_user_id(),'reviewed_at'=>$now,'updated_at'=>$now);
         } elseif ($action === 'publish') {
@@ -326,6 +326,12 @@ class INO_Platform_Governance {
 
     private static function public_link($record) {
         if (!$record->attachment_id || !$record->document_hash) { return ''; }
+        $pdf_path = get_attached_file((int)$record->attachment_id);
+        if (!$pdf_path || !is_file($pdf_path) || !is_readable($pdf_path) ||
+            get_post_mime_type((int)$record->attachment_id) !== 'application/pdf' ||
+            !hash_equals((string)$record->document_hash, (string)hash_file('sha256', $pdf_path))) {
+            return '<span class="ino-member-notice">Publication document is unavailable or has changed; link withheld pending review.</span>';
+        }
         $url = wp_get_attachment_url((int)$record->attachment_id);
         return $url ? '<a href="' . esc_url($url) . '" rel="noopener noreferrer" target="_blank">View public PDF ↗</a>' : '';
     }
@@ -365,7 +371,7 @@ class INO_Platform_Governance {
         $html = '<section class="ino-shell ino-gov-public"><div class="ino-heading"><span>INO Governance</span><h1>Constitution Registry</h1></div>';
         if (!$rows) { return $html . '<p class="ino-member-notice">No constitutional version has completed review and authorized publication in this registry.</p></section>'; }
         foreach ($rows as $record) {
-            $html .= '<article class="ino-gov-tile"><h2>' . esc_html($record->title) . '</h2><p>Version: ' . esc_html($record->version_label ?: 'Not supplied') . ' · Recorded adoption date: ' . esc_html($record->adopted_on ?: 'Not supplied') . '</p><p>' . esc_html($record->summary) . '</p><p>Reference: ' . esc_html($record->record_code) . '</p><p>' . self::public_link($record) . '</p></article>';
+            $html .= '<article class="ino-gov-tile"><h2>' . esc_html($record->title) . '</h2><p>Version: ' . esc_html($record->version_label ?: 'Not supplied') . ' · Recorded adoption date: ' . esc_html($record->adopted_on ?: 'Not supplied') . '</p><p>' . esc_html($record->summary) . '</p><p>Internal reference: ' . esc_html($record->record_code) . '</p><p>Document SHA-256: <code>' . esc_html($record->document_hash) . '</code></p><p>' . self::public_link($record) . '</p></article>';
         }
         return $html . '</section>';
     }
