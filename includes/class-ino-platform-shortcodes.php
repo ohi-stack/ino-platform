@@ -19,6 +19,13 @@ class INO_Platform_Shortcodes {
         wp_register_style('ino-platform-public', false, array(), INO_PLATFORM_VERSION);
         wp_enqueue_style('ino-platform-public');
         wp_add_inline_style('ino-platform-public', self::css());
+        $style = 'assets/css/ino-public-platform.css';
+        wp_enqueue_style(
+            'ino-platform-public-design',
+            INO_PLATFORM_URL . $style,
+            array('ino-platform-public'),
+            file_exists(INO_PLATFORM_PATH . $style) ? (string) filemtime(INO_PLATFORM_PATH . $style) : INO_PLATFORM_VERSION
+        );
     }
 
     private static function css() {
@@ -29,7 +36,23 @@ class INO_Platform_Shortcodes {
         return '<section class="ino-shell"><div class="ino-heading"><span>Indigenous Nation of Onegodia</span><h1>'.esc_html($title).'</h1></div><div class="ino-card-public">'.$body.'</div></section>';
     }
 
-    public static function portal() { return '<section class="ino-shell"><div class="ino-hero-public"><p>Indigenous Nation of Onegodia</p><h1>INO Platform</h1><p>Membership, identity, ancestry, social connections, family trees, grants, housing, governance, documents, and community services in one integrated WordPress platform.</p><p><a class="ino-btn ino-btn-gold" href="'.esc_url(home_url('/member-directory/')).'">Explore Members</a></p></div></section>'; }
+    public static function portal() {
+        $services = array(
+            array('01', 'Membership', 'Learn about INO membership categories, participation, and administrative standards.', '/ino-membership/', 'View membership'),
+            array('02', 'Identity & Heritage', 'Preserve personal, religious and ancestral information using appropriate evidence classifications.', '/choose-your-identity/', 'Explore identity'),
+            array('03', 'Documents & Archives', 'Review the purpose of the INO document registry and protected institutional records.', '/ino-document-registry/', 'Explore records'),
+            array('04', 'Treasury & Grants', 'Understand funding-pipeline tracking, grant administration and reporting objectives.', '/ino-treasury-grants/', 'Explore treasury'),
+            array('05', 'Land & Housing', 'View housing-development planning and the organization’s stewardship initiatives.', '/ino-housing-development/', 'Explore housing'),
+            array('06', 'Community Programs', 'Discover education, volunteer service and community development initiatives.', '/ino-community-programs/', 'View programs')
+        );
+        $html = '<section class="ino-shell ino-portal"><header class="ino-hero-public"><span class="ino-portal-eyebrow">Indigenous Nation of Onegodia · Digital Services</span><h1>A Connected Institutional Platform</h1><p class="ino-portal-lead">Explore membership, identity, cultural heritage, governance, records, community programs and development pathways within one evolving digital environment.</p><div class="ino-portal-actions"><a class="ino-btn ino-btn-gold" href="' . esc_url(home_url('/ino-membership/')) . '">Membership overview ↗</a><a class="ino-portal-outline" href="' . esc_url(home_url('/about-ino-platform/')) . '">About the platform</a></div><div class="ino-portal-strap"><span>Records &amp; identity</span><span>Community programs</span><span>Institutional accountability</span></div></header>';
+        $html .= '<section class="ino-portal-section" aria-labelledby="ino-services-heading"><div class="ino-portal-section-head"><div><span class="ino-portal-label">Explore the ecosystem</span><h2 id="ino-services-heading">Platform workspaces</h2><p>Each service area has a defined purpose. Features that are not yet operational remain informational until independently verified.</p></div></div><div class="ino-service-grid">';
+        foreach ($services as $service) {
+            $html .= '<article class="ino-service-card"><span class="ino-service-symbol" aria-hidden="true">' . esc_html($service[0]) . '</span><h3>' . esc_html($service[1]) . '</h3><p>' . esc_html($service[2]) . '</p><a href="' . esc_url(home_url($service[3])) . '">' . esc_html($service[4]) . ' ↗</a></article>';
+        }
+        $html .= '</div></section><aside class="ino-portal-banner"><div><strong>Building reliable institutional services</strong><p>The INO Platform is under phased development. Membership or identity records do not independently confer civil citizenship, governmental recognition, or external tribal enrollment.</p></div><a class="ino-btn ino-btn-navy" href="' . esc_url(home_url('/identity-standards/')) . '">Review standards</a></aside></section>';
+        return $html;
+    }
     public static function about() { return self::simple('About the INO Platform','<p>The INO Platform is the central WordPress-based administration and service-delivery system for the Indigenous Nation of Onegodia. It connects public pages, secure member dashboards, and administrative control panels.</p>'); }
     public static function membership() { return self::simple('INO Membership','<p>Membership tools support applications, member numbers, classifications, status histories, profile records, and access to INO programs.</p>'); }
     public static function citizenship() { return self::simple('INO Citizenship','<p>This portal records voluntary INO enrollment and institutional membership classifications. It does not independently alter government-recognized civil citizenship or immigration status.</p>'); }
@@ -128,8 +151,34 @@ class INO_Platform_Shortcodes {
     }
 
     public static function identity_dashboard() {
-        if (!is_user_logged_in()) { return '<div class="ino-notice">Please log in to access this dashboard.</div>'; }
-        global $wpdb; $uid=get_current_user_id(); $count=(int)$wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$wpdb->prefix}ino_identity_declarations WHERE user_id=%d",$uid));
-        return '<section class="ino-shell"><div class="ino-heading"><span>Private Member Area</span><h1>Identity & Heritage Dashboard</h1></div><div class="ino-public-grid"><div><strong>'.esc_html($count).'</strong><br>Declarations</div><div><strong>'.esc_html(count_user_posts($uid)).'</strong><br>Archive contributions</div><div><strong>'.esc_html(INO_Platform_Social::buddyPress_active()?'BuddyPress':'INO fallback').'</strong><br>Social system</div></div></section>';
+        if (!is_user_logged_in()) {
+            return '<section class="ino-shell"><div class="ino-member-notice">Please log in to view your private Identity &amp; Heritage Dashboard.</div></section>';
+        }
+        global $wpdb;
+        $uid = get_current_user_id();
+        $declarations = (int) $wpdb->get_var($wpdb->prepare(
+            "SELECT COUNT(*) FROM {$wpdb->prefix}ino_identity_declarations WHERE user_id = %d", $uid
+        ));
+        $relations = (int) $wpdb->get_var($wpdb->prepare(
+            "SELECT COUNT(*) FROM {$wpdb->prefix}ino_family_relationships WHERE (person_a = %d OR person_b = %d) AND status = 'approved'",
+            $uid, $uid
+        ));
+        $membership_status = $wpdb->get_var($wpdb->prepare(
+            "SELECT status FROM {$wpdb->prefix}ino_members WHERE user_id = %d ORDER BY id DESC LIMIT 1", $uid
+        ));
+        $membership_status = $membership_status ? (string) $membership_status : 'No record';
+        $html = '<section class="ino-shell ino-member-dashboard"><div class="ino-hero-public"><span class="ino-portal-eyebrow">Private member workspace</span><h1>Identity &amp; Heritage</h1><p class="ino-portal-lead">Review your recorded information and explore available private record tools. Record classifications are not independent external identity verification.</p><div class="ino-portal-actions"><a class="ino-btn ino-btn-gold" href="' . esc_url(home_url('/identity-declaration/')) . '">Open declaration form ↗</a></div></div>';
+        $html .= '<section class="ino-portal-section" aria-labelledby="ino-member-records-heading"><div class="ino-portal-section-head"><div><span class="ino-portal-label">Your records</span><h2 id="ino-member-records-heading">Private overview</h2></div></div><div class="ino-member-widget-grid">';
+        $widgets = array(
+            array(number_format_i18n($declarations), 'Identity declarations', '/identity-declaration/', 'Open declarations'),
+            array(number_format_i18n($relations), 'Approved relationships', '/family-tree/', 'View family records'),
+            array($membership_status, 'Stored INO membership status', '/ino-membership/', 'Membership information')
+        );
+        foreach ($widgets as $widget) {
+            $html .= '<article class="ino-member-widget"><strong>' . esc_html($widget[0]) . '</strong><span>' . esc_html($widget[1]) . '</span><a href="' . esc_url(home_url($widget[2])) . '">' . esc_html($widget[3]) . ' ↗</a></article>';
+        }
+        $html .= '</div></section><div class="ino-member-notice">These figures are drawn from your own INO records. Family relationships shown here count approved records only. Do not use an INO credential as a substitute for government-issued identification.</div></section>';
+        return $html;
     }
+
 }

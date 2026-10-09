@@ -1,9 +1,9 @@
 name: INO PHP lint
 on:
   push:
-    branches: [main, 'fix/**']
+    branches: [main, 'fix/**', 'feat/**']
   pull_request:
-    branches: [main]
+    branches: [main, 'fix/**']
 permissions:
   contents: read
 jobs:
@@ -23,3 +23,14 @@ jobs:
         run: |
           set -euo pipefail
           find . -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Verify UI assets and fail-closed privacy guards
+        run: |
+          set -euo pipefail
+          test -s assets/css/ino-admin-command.css
+          test -s assets/css/ino-public-platform.css
+          test -s assets/js/ino-admin-command.js
+          grep -Fq 'data-ino-series' includes/class-ino-platform-admin.php
+          grep -Fq 'public_consent = 1' includes/class-ino-platform-shortcodes.php
+          grep -Fq "status='approved'" includes/class-ino-platform-shortcodes.php
+          grep -Fq 'prefers-reduced-motion:reduce' assets/css/ino-admin-command.css
+          grep -Fq 'prefers-reduced-motion:reduce' assets/css/ino-public-platform.css
