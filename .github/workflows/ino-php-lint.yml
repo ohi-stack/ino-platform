@@ -34,3 +34,20 @@ jobs:
           grep -Fq "status='approved'" includes/class-ino-platform-shortcodes.php
           grep -Fq 'prefers-reduced-motion:reduce' assets/css/ino-admin-command.css
           grep -Fq 'prefers-reduced-motion:reduce' assets/css/ino-public-platform.css
+
+      - name: Verify governance foundation contracts
+        run: |
+          set -euo pipefail
+          test -s includes/class-ino-platform-governance.php
+          test -s assets/css/ino-governance-foundation.css
+          test -s docs/governance-phase1-foundation.md
+          grep -Fq "ino_governance_review" includes/class-ino-platform-governance.php
+          grep -Fq "ino_governance_publish" includes/class-ino-platform-governance.php
+          grep -Fq "ino_governance_schema_version" includes/class-ino-platform-governance.php
+          grep -Fq "ino_governance_audit" includes/class-ino-platform-governance.php
+          grep -Fq "ino_governance_structure" includes/class-ino-platform-governance.php
+          grep -Fq "current_user_can('ino_governance_publish')" includes/class-ino-platform-governance.php
+          grep -Fq "check_admin_referer" includes/class-ino-platform-governance.php
+          grep -Fq "START TRANSACTION" includes/class-ino-platform-governance.php
+          grep -Fq "document_hash" includes/class-ino-platform-governance.php
+          grep -Fq "prefers-reduced-motion:reduce" assets/css/ino-governance-foundation.css

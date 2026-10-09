@@ -1,0 +1,38 @@
+.ino-gov-admin{--ino-governance-gold:#C99A2E;--ino-governance-navy:#0D2B45}
+.ino-gov-admin .ino-hero{margin:0 0 22px}
+.ino-gov-admin .ino-panel{margin-top:20px}
+.ino-gov-admin .ino-gov-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 22px;margin-top:18px}
+.ino-gov-admin .ino-gov-form label{display:flex;flex-direction:column;gap:7px;color:#102B45;font-weight:700;font-size:13px}
+.ino-gov-admin .ino-gov-form label:nth-child(6){grid-column:1/-1}
+.ino-gov-admin .ino-gov-form input,.ino-gov-admin .ino-gov-form select,.ino-gov-admin .ino-gov-form textarea,.ino-gov-admin .ino-gov-mini-form textarea{width:100%;max-width:100%;min-height:42px;border:1px solid #c4d1da;border-radius:10px;padding:9px 12px;background:#fff;color:#102B45;font-size:14px}
+.ino-gov-admin .ino-gov-form input:focus-visible,.ino-gov-admin .ino-gov-form select:focus-visible,.ino-gov-admin .ino-gov-form textarea:focus-visible,.ino-gov-admin .ino-gov-mini-form textarea:focus-visible{outline:3px solid #C99A2E;outline-offset:2px}
+.ino-gov-admin .ino-gov-form button{justify-self:start;align-self:end}
+.ino-gov-admin .ino-gov-table-wrap{overflow:auto;max-width:100%;border-radius:11px}
+.ino-gov-admin .ino-table{min-width:760px}
+.ino-gov-admin .ino-gov-mini-form{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0}
+.ino-gov-admin .ino-gov-mini-form textarea{width:210px;min-height:55px}
+.ino-gov-admin .ino-gov-action{display:inline-flex;align-items:center;min-height:38px;border-radius:9px;padding:8px 13px;border:1px solid #0D2B45;background:#0D2B45;color:#fff;font-weight:700;cursor:pointer}
+.ino-gov-admin .ino-gov-action:hover{background:#19455f}
+.ino-gov-public .ino-gov-public-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:24px}
+.ino-gov-public .ino-gov-tile{border:1px solid #dce5e9;border-radius:18px;padding:24px;background:#fff;margin-bottom:15px;box-shadow:0 9px 29px rgba(7,27,45,.06);transition:transform .2s ease,border-color .2s ease}
+.ino-gov-public .ino-gov-tile:hover{border-color:#C99A2E;transform:translateY(-2px)}
+.ino-gov-public .ino-gov-tile h2{color:#071B2D;font-size:clamp(20px,2.4vw,26px);margin:0 0 12px}
+.ino-gov-public .ino-gov-tile h3{color:#071B2D;margin:0 0 11px}
+.ino-gov-public .ino-gov-tile p{color:#506b7a;line-height:1.7}
+.ino-gov-public .ino-gov-tile a{color:#0D2B45;font-weight:800;text-decoration:underline;text-underline-offset:3px}
+.ino-gov-public .ino-gov-tile a:focus-visible{outline:3px solid #A5070A;outline-offset:3px}
+@media(max-width:900px){.ino-gov-public .ino-gov-public-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:650px){.ino-gov-admin .ino-gov-form{grid-template-columns:1fr}.ino-gov-admin .ino-gov-form label:nth-child(6){grid-column:auto}.ino-gov-public .ino-gov-public-grid{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.ino-gov-public .ino-gov-tile,.ino-gov-admin *{transition:none!important;animation:none!important}}
+
+.ino-gov-admin .ino-gov-status-chart{display:grid;gap:17px;margin-top:20px}
+.ino-gov-admin .ino-gov-status-row{display:grid;grid-template-columns:145px minmax(0,1fr) minmax(180px,1fr);gap:15px;align-items:center}
+.ino-gov-admin .ino-gov-status-row strong{color:#0D2B45}
+.ino-gov-admin .ino-gov-status-track{display:flex;overflow:hidden;background:#edf1f3;border-radius:999px;height:14px;width:100%}
+.ino-gov-admin .ino-gov-status-part{height:100%;min-width:0;transition:width .45s ease}
+.ino-gov-admin .ino-gov-status-draft{background:#98AFC1}
+.ino-gov-admin .ino-gov-status-reviewed{background:#C99A2E}
+.ino-gov-admin .ino-gov-status-published{background:#22745F}
+.ino-gov-admin .ino-gov-status-withdrawn{background:#A5070A}
+@media(max-width:950px){.ino-gov-admin .ino-gov-status-row{grid-template-columns:1fr;gap:7px}}
+@media(prefers-reduced-motion:reduce){.ino-gov-admin .ino-gov-status-part{transition:none!important}}
