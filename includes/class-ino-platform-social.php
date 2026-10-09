@@ -53,8 +53,10 @@ class INO_Platform_Social {
         <?php self::row('ino_family_lineage','Family or lineage name',$user); ?>
         <?php self::row('ino_homeland','Homeland or country of origin',$user); ?>
         <?php self::row('ino_language','Language or cultural tradition',$user); ?>
+        <?php if (current_user_can('manage_options')) : ?>
         <?php self::row('ino_membership_class','INO membership classification',$user); ?>
         <?php self::row('ino_membership_number','INO membership number',$user); ?>
+        <?php endif; ?>
         <tr><th><label for="ino_cover_image">Cover image URL</label></th><td><input class="regular-text" type="url" name="ino_cover_image" id="ino_cover_image" value="<?php echo esc_attr(get_user_meta($user->ID,'ino_cover_image',true)); ?>"><p class="description">Used by the fallback profile. BuddyPress cover images take precedence when available.</p></td></tr>
         </tbody></table>
     <?php }
@@ -65,7 +67,11 @@ class INO_Platform_Social {
 
     public static function save_profile_fields($user_id) {
         if (!current_user_can('edit_user', $user_id)) { return; }
-        $keys = array('ino_preferred_name','ino_ancestral_identity','ino_tribe_clan','ino_family_lineage','ino_homeland','ino_language','ino_membership_class','ino_membership_number','ino_cover_image');
+        $keys = array('ino_preferred_name','ino_ancestral_identity','ino_tribe_clan','ino_family_lineage','ino_homeland','ino_language','ino_cover_image');
+        if (current_user_can('manage_options')) {
+            $keys[] = 'ino_membership_class';
+            $keys[] = 'ino_membership_number';
+        }
         foreach ($keys as $key) {
             if (isset($_POST[$key])) {
                 $value = $key === 'ino_cover_image' ? esc_url_raw(wp_unslash($_POST[$key])) : sanitize_text_field(wp_unslash($_POST[$key]));
