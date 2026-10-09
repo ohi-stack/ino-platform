@@ -32,11 +32,16 @@ class INO_Platform_Admin {
     }
 
     public static function register_menu() {
+        add_menu_page('INO Governance', 'INO Governance', 'ino_governance_view', 'ino-governance', array('INO_Platform_Governance', 'admin_page'), 'dashicons-bank', 4);
         add_menu_page('INO Platform', 'INO Platform', 'manage_options', 'ino-platform', array(__CLASS__, 'dashboard'), 'dashicons-networking', 3);
         foreach (self::modules() as $slug => $details) {
             $label = $details[0];
             add_submenu_page('ino-platform', $label, $label, 'manage_options', $slug, function () use ($slug, $label) {
-                self::module($label, $slug);
+                if ($slug === 'ino-platform-governance') {
+                    INO_Platform_Governance::admin_page();
+                } else {
+                    self::module($label, $slug);
+                }
             });
         }
     }
