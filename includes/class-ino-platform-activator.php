@@ -11,8 +11,8 @@ class INO_Platform_Activator {
     }
 
     private static function create_roles() {
-        add_role('ino_member', 'INO Member', array('read' => true, 'upload_files' => true));
-        add_role('ino_volunteer', 'INO Volunteer', array('read' => true, 'upload_files' => true));
+        add_role('ino_member', 'INO Member', array('read' => true));
+        add_role('ino_volunteer', 'INO Volunteer', array('read' => true));
         add_role('ino_program_manager', 'INO Program Manager', array('read' => true));
         // Older role definitions persist across upgrades. Remove unintended WordPress media/post rights.
         foreach (array('ino_member','ino_volunteer','ino_program_manager') as $name) {
