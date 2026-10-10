@@ -1,9 +1,9 @@
 name: INO PHP lint
 on:
   push:
-    branches: [main, 'fix/**', 'feat/**']
+    branches: [main, 'fix/**', 'feat/**', 'release/**']
   pull_request:
-    branches: [main, 'fix/**']
+    branches: [main, 'fix/**', 'release/**']
 permissions:
   contents: read
 jobs:
@@ -95,5 +95,16 @@ jobs:
           grep -Fq "g.status='published'" includes/class-ino-governance-odin.php
           grep -Fq "ino_odin_verify" includes/class-ino-governance-odin.php
           grep -Fq "prefers-reduced-motion:reduce" assets/css/ino-governance-odin.css
-          grep -Fq "Version: 1.5.0-rc.1" ino-platform.php
-          grep -Fq "define('INO_PLATFORM_VERSION', '1.5.0-rc.1')" ino-platform.php
+          # Version pinned in the current release gate, not the older Phase 3 contract.
+
+      - name: Verify release and member UI activation boundaries
+        run: |
+          set -euo pipefail
+          test -s includes/class-ino-platform-release.php
+          grep -Fq "INO_PLATFORM_PRODUCTION_APPROVED" includes/class-ino-platform-release.php
+          grep -Fq "ino-platform-suite/ino-platform-suite.php" includes/class-ino-platform-release.php
+          grep -Fq "ino_platform_schema_version" includes/class-ino-platform-release.php
+          grep -Fq "ino_member_dashboard" includes/class-ino-platform-shortcodes.php
+          grep -Fq "ino-member-dashboard" includes/class-ino-platform-activator.php
+          grep -Fq "Version: 1.5.1-rc.1" ino-platform.php
+          grep -Fq "define('INO_PLATFORM_VERSION', '1.5.1-rc.1')" ino-platform.php

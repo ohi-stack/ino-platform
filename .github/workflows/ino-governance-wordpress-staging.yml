@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - 'feat/ino-wp-staging-workflow-*'
+      - 'release/ino-platform-*'
   pull_request:
     branches:
       - 'feat/ino-odin-transparency-phase3-20261010'
@@ -52,6 +53,7 @@ jobs:
           wp core download --path="$WP_ROOT" --quiet
           wp config create --path="$WP_ROOT" --dbname=ino_stage_db \
             --dbuser=ino_stage --dbpass=ino_stage_test_pw --dbhost=127.0.0.1:3306 --quiet
+          wp config set WP_ENVIRONMENT_TYPE staging --path="$WP_ROOT" --quiet
           wp core install --path="$WP_ROOT" --url=http://localhost:8081 \
             --title="INO isolated integration test" --admin_user=admin_test \
             --admin_password=synthetic-ci-only-password --admin_email=admin@example.invalid --quiet
@@ -62,6 +64,46 @@ jobs:
           wp plugin status ino-platform --path="$WP_ROOT"
       - name: Execute complete governance workflow, permission denials and audit rollback
         run: bash tests/staging/run.sh
+      - name: Build single installable INO plugin ZIP
+        if: success()
+        run: |
+          set -euo pipefail
+          mkdir -p dist/ino-platform
+          git archive --format=tar HEAD -- ino-platform.php includes/ assets/ README.md README.txt changelog.md | \
+            tar -xf - -C dist/ino-platform
+          test -s dist/ino-platform/ino-platform.php
+          test -s dist/ino-platform/includes/class-ino-platform-release.php
+          test -s dist/ino-platform/assets/css/ino-admin-command.css
+          test -s dist/ino-platform/assets/css/ino-public-platform.css
+          test -s dist/ino-platform/assets/css/ino-governance-odin.css
+          test -s dist/ino-platform/assets/js/ino-admin-command.js
+          find dist/ino-platform -type f -name '*.php' -print0 | xargs -0 -n1 php -l > dist/php-release-lint.txt
+          cd dist
+          zip -q -r "INO-Platform-1.5.1-rc.1-PRODUCTION-CANDIDATE.zip" ino-platform
+          unzip -t "INO-Platform-1.5.1-rc.1-PRODUCTION-CANDIDATE.zip" | tail -1
+          sha256sum "INO-Platform-1.5.1-rc.1-PRODUCTION-CANDIDATE.zip" > plugin-SHA256.txt
+      - name: Reinstall the packaged ZIP and preserve existing governance records
+        if: success()
+        run: |
+          set -euo pipefail
+          wp plugin deactivate ino-platform --path="$WP_ROOT" --quiet
+          wp plugin install "dist/INO-Platform-1.5.1-rc.1-PRODUCTION-CANDIDATE.zip" --path="$WP_ROOT" --force --quiet
+          wp plugin activate ino-platform --path="$WP_ROOT" --quiet
+          wp plugin status ino-platform --path="$WP_ROOT"
+          INO_ASSERT=audit wp eval-file tests/staging/assert.php --path="$WP_ROOT" --quiet
+          INO_ASSERT=outcome wp eval-file tests/staging/assert.php --path="$WP_ROOT" --quiet
+          INO_ASSERT=notice_read wp eval-file tests/staging/assert.php --path="$WP_ROOT" --quiet
+          wp eval-file tests/release/shortcode-smoke.php --path="$WP_ROOT" --quiet
+      - name: Upload installable WordPress plugin
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: INO-Platform-1.5.1-rc.1-WordPress-Plugin
+          path: |
+            dist/INO-Platform-1.5.1-rc.1-PRODUCTION-CANDIDATE.zip
+            dist/plugin-SHA256.txt
+            dist/php-release-lint.txt
+          if-no-files-found: error
       - name: Upload audit-safe integration results
         uses: actions/upload-artifact@v4
         if: always()

@@ -1,24 +1,27 @@
-INO Platform Plugin 1.2.0
+INO Platform Plugin — 1.5.1-rc.1
+Requires: WordPress 6.5+, PHP 7.4+, transactional InnoDB-capable MySQL/MariaDB.
 
-Upgrade highlights:
-- Upgrade-safe database migrations from 1.0.0
-- Identity, Ancestry & Peoplehood Registry
-- Identity declaration form and member dashboard
-- Modern member profiles with cover image and avatar support
-- Member directory and public profile pages
-- BuddyPress friendships, avatars, covers, and profile-tab compatibility
-- Independent social-connection fallback when BuddyPress is inactive
-- Family relationship requests and family-tree display
-- Correct INO navy, cream, gold, white, and deep-red branding
-- Duplicate-safe automatic page generation
+INSTALLABLE SINGLE WORDPRESS PLUGIN PACKAGE.
+STATUS: Production-target candidate; actual hosted WordPress staging acceptance NOT established.
 
-Important classification notice:
-Ancestral declarations are stored with evidence and review classifications. INO records do not independently establish recognition or enrollment by an external government or tribal nation.
+Included:
+- Updated INO Command Center UI, navy/gold branding, public portal and member dashboard.
+- Privacy-gated member directory, authenticated self-record display and approved relationships.
+- Constitution registry and internal governance authority structure.
+- Recorded meetings, locked agendas, versioned minutes, evidence-backed outcomes.
+- Restricted assignments, internal notices and audit logging.
+- Source-linked ODIN document registry, history and public ID verification.
+- Corrected dbDelta upgrade formatting, version-independent schema migration checks.
+- Explicit Suite/Core installation collision and production approval safeguards.
 
-Installation:
-1. Back up the WordPress database and plugin directory.
-2. Upload the plugin ZIP through Plugins > Add New > Upload Plugin.
-3. Replace the older version when WordPress prompts.
-4. Activate the plugin.
-5. Review INO Platform > Dashboard and Pages.
-6. Optional: install and activate BuddyPress for its native friendship, avatar, cover, and profile systems.
+Install in a fully backed-up, protected STAGING CLONE first.
+Do not run concurrently with INO Platform Suite or legacy INO Core.
+The full Suite membership application engine is NOT consolidated here.
+No external-signature certification, legal adoption automation or email/SMS notices.
+
+Production activation is disabled unless the authorized operator sets
+define('INO_PLATFORM_PRODUCTION_APPROVED', true);
+in wp-config.php AFTER written hosted staging acceptance and release review.
+
+Governance recorded decisions are not legal adoption by themselves.
+See README.md for workflows, exact release boundaries, rollback and testing.
