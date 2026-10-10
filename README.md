@@ -1,8 +1,18 @@
 # Indigenous Nation of Onegodia — INO Platform Plugin
 
-**Version:** 1.5.2-rc.1 — production-target WordPress package, **not approved for live activation without actual-site acceptance**.  
+**Version:** 1.6.0-rc.1 — production-target WordPress package, **not approved for live activation without actual-site acceptance**.  
 **Requires:** WordPress 6.5+, PHP 7.4+, transactional InnoDB-capable MySQL/MariaDB for governance audits.  
 **Installable ZIP root:** `ino-platform/ino-platform.php` (one plugin, not a nested deployment bundle).
+
+## INO Voting & Consultation
+
+New **[INO Voting]** admin module: `wp-admin/admin.php?page=ino-platform-voting`.
+
+Voting on arbitrary subjects supports draft/edit/open/close/cancel, single/multiple choice, scheduled ballot windows, account-based one-vote restrictions, configurable electorate (approved members, governance staff, logged-in users), after-close public aggregates or restricted results, private participation receipts, aggregate CSV exports, and actor audit logs. All polls are **nonbinding** and do not adopt governing instruments.
+
+New pages: `/ino-voting/` → `[ino_voting]`, `/ino-vote-results/` → `[ino_vote_results]`, and `/ino-my-votes/` → `[ino_my_votes]`.
+
+Votes are **not anonymous**: WordPress account ID and selections remain linked in the database. The one-vote rule applies to each account rather than to externally verified unique individuals. See `docs/voting-module-1.6.md` for data, privacy, limitations, tests and production acceptance.
 
 ## BuddyPress Integration — Admin Workspace
 

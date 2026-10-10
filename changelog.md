@@ -1,3 +1,11 @@
+## 1.6.0-rc.1 — Nonbinding Voting & Consultation
+
+- New WordPress administration and frontend voting modules and three shortcodes.
+- Draft scheduling, audience rules, options, voting receipts, administrator-only/public-after-close results, CSV and event audit.
+- One ballot per eligible WordPress account with transactional inserts, unique constraints, record locking, vote-window enforcement.
+- Real WordPress/MariaDB voting regression suite and reinstall retention assertions.
+- Nonbinding only; no identity-proofed elections, secret ballot or constitutional adoption.
+
 ## 1.5.2-rc.1 — BuddyPress Integration Upgrade
 
 - Replaced the BuddyPress Integration placeholder with an operational WordPress admin workspace at `ino-platform-buddypress`.

@@ -1,10 +1,13 @@
-INO Platform Plugin — 1.5.2-rc.1
+INO Platform Plugin — 1.6.0-rc.1
 Requires: WordPress 6.5+, PHP 7.4+, transactional InnoDB-capable MySQL/MariaDB.
 
 INSTALLABLE SINGLE WORDPRESS PLUGIN PACKAGE.
 STATUS: Production-target candidate; actual hosted WordPress staging acceptance NOT established.
 
 Included:
+- Voting & Consultation: admin draft/open/close management, frontend ballots, results, private voter receipts.
+- Single/multiple choice, three configurable electorates, one vote per eligible WP account, transactional audit.
+- Nonbinding only: NO automatic resolution adoption, anonymous ballots or externally verified elections.
 - Operational BuddyPress admin panel: diagnostics, real component checks, settings, alignment lookup, audit history.
 - Permission and nonce protected bridge settings; consent-gated friend requests.
 - No automatic public xProfile fields from private INO identity data.

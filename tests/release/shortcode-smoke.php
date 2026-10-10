@@ -8,10 +8,12 @@ function ino_rc_check($condition,$description) {
     if (!$condition) { WP_CLI::error('FAIL '.$description); }
     WP_CLI::log('PASS '.$description);
 }
-ino_rc_check(defined('INO_PLATFORM_VERSION') && INO_PLATFORM_VERSION==='1.5.2-rc.1','packaged release version consistent');
+ino_rc_check(defined('INO_PLATFORM_VERSION') && INO_PLATFORM_VERSION==='1.6.0-rc.1','packaged release version consistent');
 ino_rc_check(defined('INO_PLATFORM_SCHEMA_VERSION') && 
     get_option('ino_platform_schema_version')===INO_PLATFORM_SCHEMA_VERSION,'schema marker established without resetting governance');
 ino_rc_check(shortcode_exists('ino_member_dashboard'),'member dashboard compatibility shortcode registered');
+ino_rc_check(shortcode_exists('ino_voting') && shortcode_exists('ino_vote_results') && shortcode_exists('ino_my_votes'),'INO Voting shortcodes registered');
+ino_rc_check(get_option('ino_voting_schema_version')===INO_Platform_Voting::SCHEMA,'voting schema retained');
 ino_rc_check(class_exists('INO_Platform_BuddyPress'),'BuddyPress integration controller exists');
 ino_rc_check(INO_Platform_BuddyPress::active(),'BuddyPress component runtime available');
 ino_rc_check(has_action('template_redirect',array('INO_Platform_Release','private_page_headers'))!==false,'account-sensitive page response uses no-cache hook');
@@ -49,7 +51,8 @@ foreach (array(
     'assets/css/ino-governance-operations.css',
     'assets/css/ino-governance-odin.css',
     'assets/js/ino-admin-command.js',
-    'assets/css/ino-buddypress-admin.css'
+    'assets/css/ino-buddypress-admin.css',
+    'assets/css/ino-voting.css'
 ) as $relative) {
     ino_rc_check(is_file(INO_PLATFORM_PATH.$relative),'packaged asset '.$relative);
 }

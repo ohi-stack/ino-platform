@@ -106,8 +106,8 @@ jobs:
           grep -Fq "ino_platform_schema_version" includes/class-ino-platform-release.php
           grep -Fq "ino_member_dashboard" includes/class-ino-platform-shortcodes.php
           grep -Fq "ino-member-dashboard" includes/class-ino-platform-activator.php
-          grep -Fq "Version: 1.5.2-rc.1" ino-platform.php
-          grep -Fq "define('INO_PLATFORM_VERSION', '1.5.2-rc.1')" ino-platform.php
+          grep -Fq "Version: 1.6.0-rc.1" ino-platform.php
+          grep -Fq "define('INO_PLATFORM_VERSION', '1.6.0-rc.1')" ino-platform.php
 
       - name: Verify BuddyPress Bridge integration contracts
         run: |
@@ -122,3 +122,19 @@ jobs:
           grep -Fq "check_admin_referer" includes/class-ino-platform-buddypress.php
           grep -Fq "ino_bp_bridge_audit" includes/class-ino-platform-buddypress.php
           grep -Fq "prefers-reduced-motion:reduce" assets/css/ino-buddypress-admin.css
+
+      - name: Verify INO Voting module contract
+        run: |
+          set -euo pipefail
+          test -s includes/class-ino-platform-voting.php
+          test -s assets/css/ino-voting.css
+          test -s tests/voting/run.sh
+          grep -Fq 'ino_votes_ballots' includes/class-ino-platform-voting.php
+          grep -Fq 'UNIQUE KEY one_ballot' includes/class-ino-platform-voting.php
+          grep -Fq 'check_admin_referer' includes/class-ino-platform-voting.php
+          grep -Fq 'FOR UPDATE' includes/class-ino-platform-voting.php
+          grep -Fq 'START TRANSACTION' includes/class-ino-platform-voting.php
+          grep -Fq 'ino_voting' includes/class-ino-platform-voting.php
+          grep -Fq 'results_policy' includes/class-ino-platform-voting.php
+          grep -Fq 'prefers-reduced-motion:reduce' assets/css/ino-voting.css
+          grep -Fq "Version: 1.6.0-rc.1" ino-platform.php
