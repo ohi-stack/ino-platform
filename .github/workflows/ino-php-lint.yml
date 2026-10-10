@@ -103,7 +103,7 @@ jobs:
           set -euo pipefail
           test -s includes/class-ino-governance-clarification.php
           test -s docs/ino-proposed-self-governance-clarification-2026.md
-          grep -Fq 'ino_governance_clarification' ino-platform.php
+          grep -Fq 'INO_Governance_Clarification::init();' ino-platform.php
           grep -Fq 'ino-governance-clarification' includes/class-ino-platform-activator.php
           grep -Fq 'INO-SRC-OAS-US-2016-01' includes/class-ino-governance-clarification.php
           grep -Fq 'INO-SRC-OAS-COL-2016-04' includes/class-ino-governance-clarification.php
