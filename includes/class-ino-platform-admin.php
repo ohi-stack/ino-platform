@@ -42,6 +42,8 @@ class INO_Platform_Admin {
             add_submenu_page('ino-platform', $label, $label, 'manage_options', $slug, function () use ($slug, $label) {
                 if ($slug === 'ino-platform-governance') {
                     INO_Platform_Governance::admin_page();
+                } elseif ($slug === 'ino-platform-members') {
+                    INO_Platform_Membership_UI::admin_page();
                 } elseif ($slug === 'ino-platform-buddypress') {
                     INO_Platform_BuddyPress::page();
                 } elseif ($slug === 'ino-platform-voting') {
