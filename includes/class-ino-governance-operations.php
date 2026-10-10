@@ -444,10 +444,22 @@ class INO_Governance_Operations {
         $id=self::number('notice_id');
         $notice=self::get('notices',$id);
         if ((int)$notice->recipient_id!==get_current_user_id()) { self::fail('Notice is not addressed to you.',403); }
+        $wpdb->query('START TRANSACTION');
         $updated=$wpdb->update(self::table('notices'),
             array('is_read'=>1,'read_at'=>current_time('mysql')),
             array('id'=>$id,'recipient_id'=>get_current_user_id(),'is_read'=>0));
-        if ($updated===false) { self::fail('Notification could not be updated.',500); }
+        if ($updated===false) {
+            $wpdb->query('ROLLBACK');
+            self::fail('Notification could not be updated.',500);
+        }
+        // An actual state transition must have a corresponding actor-attributed
+        // audit event. Re-reading an already-read notice is idempotent.
+        if ($updated===1 && !self::audit('notices',$id,'notification_read',
+            'Recipient acknowledged a private governance notification.')) {
+            $wpdb->query('ROLLBACK');
+            self::fail('Notification audit failed; change rolled back.',500);
+        }
+        $wpdb->query('COMMIT');
         self::done('Notification marked read.');
     }
 }
