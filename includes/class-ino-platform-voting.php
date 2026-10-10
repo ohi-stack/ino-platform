@@ -33,7 +33,7 @@ final class INO_Platform_Voting {
             electorate varchar(30) NOT NULL DEFAULT 'approved_members',
             ballot_type varchar(20) NOT NULL DEFAULT 'single',
             max_choices int(10) unsigned NOT NULL DEFAULT 1,
-            results_policy varchar(20) NOT NULL DEFAULT 'after_close',
+            results_policy varchar(20) NOT NULL DEFAULT 'admins_only',
             status varchar(20) NOT NULL DEFAULT 'draft',
             opens_at datetime NULL,
             closes_at datetime NULL,
@@ -427,7 +427,7 @@ final class INO_Platform_Voting {
         if (isset($_GET['ino_vote_notice']) && is_string($_GET['ino_vote_notice'])) {
             echo '<p class="ino-vote-notice" role="status">'.esc_html(sanitize_text_field(wp_unslash($_GET['ino_vote_notice']))).'</p>';
         }
-        echo '<section class="ino-panel"><h2>New Ballot</h2><p>Create a private draft. Set an explicit future start and end time; opened ballots cannot have their options changed.</p>';
+        echo '<section class="ino-panel"><h2>New Ballot</h2><p>Create a private draft. Set an explicit future start and end time; opened ballots cannot have their options changed. Results are administrator-only by default; publishing results from a very small poll may reveal participants’ preferences.</p>';
         self::render_editor();
         echo '</section><section class="ino-panel"><h2>Ballots &amp; Lifecycle</h2><div class="ino-vote-table"><table class="ino-table"><thead><tr><th>Ballot</th><th>Audience</th><th>Status</th><th>Participation</th><th>Manage</th></tr></thead><tbody>';
         if (!$polls) { echo '<tr><td colspan="5">No ballots created.</td></tr>'; }
@@ -455,7 +455,7 @@ final class INO_Platform_Voting {
     private static function render_editor($poll=null,$options=array()) {
         $edit=$poll!==null;
         $data=$edit?$poll:(object)array('title'=>'','description'=>'','category'=>'Community',
-            'electorate'=>'approved_members','ballot_type'=>'single','max_choices'=>1,'results_policy'=>'after_close',
+            'electorate'=>'approved_members','ballot_type'=>'single','max_choices'=>1,'results_policy'=>'admins_only',
             'opens_at'=>'','closes_at'=>'');
         echo '<form class="ino-vote-editor" method="post" action="'.esc_url(admin_url('admin-post.php')).'"><input type="hidden" name="action" value="ino_vote_manage"><input type="hidden" name="operation" value="'.($edit?'edit':'create').'">';
         if ($edit) { echo '<input type="hidden" name="poll_id" value="'.esc_attr($poll->id).'">'; }
