@@ -418,6 +418,7 @@ class INO_Platform_Governance {
         if (isset($_GET['ino_gov_notice'])) {
             echo '<div class="ino-note" role="status">' . esc_html(sanitize_text_field(wp_unslash($_GET['ino_gov_notice']))) . '</div>';
         }
+        echo '<p><a class="ino-btn ino-btn-gold" href="' . esc_url(INO_Governance_Operations::url()) . '">Open Operational Governance ↗</a></p>';
         echo '<div class="ino-section-heading"><div><h2>Governance records</h2><p>Live database counts separated by review status.</p></div></div><div class="ino-grid">';
         foreach (array('constitution'=>'Constitution editions','office'=>'Structure offices','record'=>'Other governance records') as $type=>$label) {
             $total = array_sum($counts[$type]);
