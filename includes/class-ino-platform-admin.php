@@ -22,6 +22,7 @@ class INO_Platform_Admin {
             'ino-platform-forms'       => array('Forms', 'Intake forms and submission processes'),
             'ino-platform-reports'     => array('Reports', 'Database-backed operational indicators'),
             'ino-platform-buddypress'  => array('BuddyPress Integration', 'Live health, settings, consent-aware profiles and audit'),
+            'ino-platform-voting' => array('Voting & Consultation', 'Ballots, permissioned elections, one-vote records and results'),
             'ino-platform-settings'    => array('Settings', 'Platform configuration')
         );
     }
@@ -43,6 +44,8 @@ class INO_Platform_Admin {
                     INO_Platform_Governance::admin_page();
                 } elseif ($slug === 'ino-platform-buddypress') {
                     INO_Platform_BuddyPress::page();
+                } elseif ($slug === 'ino-platform-voting') {
+                    INO_Platform_Voting::admin_page();
                 } else {
                     self::module($label, $slug);
                 }
