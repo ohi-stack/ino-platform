@@ -1,0 +1,99 @@
+name: INO PHP lint
+on:
+  push:
+    branches: [main, 'fix/**', 'feat/**']
+  pull_request:
+    branches: [main, 'fix/**']
+permissions:
+  contents: read
+jobs:
+  php-lint:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['7.4', '8.1', '8.3']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+      - name: Lint PHP sources
+        run: |
+          set -euo pipefail
+          find . -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Verify UI assets and fail-closed privacy guards
+        run: |
+          set -euo pipefail
+          test -s assets/css/ino-admin-command.css
+          test -s assets/css/ino-public-platform.css
+          test -s assets/js/ino-admin-command.js
+          grep -Fq 'data-ino-series' includes/class-ino-platform-admin.php
+          grep -Fq 'public_consent = 1' includes/class-ino-platform-shortcodes.php
+          grep -Fq "status='approved'" includes/class-ino-platform-shortcodes.php
+          grep -Fq 'prefers-reduced-motion:reduce' assets/css/ino-admin-command.css
+          grep -Fq 'prefers-reduced-motion:reduce' assets/css/ino-public-platform.css
+
+      - name: Verify governance foundation contracts
+        run: |
+          set -euo pipefail
+          test -s includes/class-ino-platform-governance.php
+          test -s assets/css/ino-governance-foundation.css
+          test -s docs/governance-phase1-foundation.md
+          grep -Fq "ino_governance_review" includes/class-ino-platform-governance.php
+          grep -Fq "ino_governance_publish" includes/class-ino-platform-governance.php
+          grep -Fq "ino_governance_schema_version" includes/class-ino-platform-governance.php
+          grep -Fq "ino_governance_audit" includes/class-ino-platform-governance.php
+          grep -Fq "ino_governance_structure" includes/class-ino-platform-governance.php
+          grep -Fq "current_user_can('ino_governance_publish')" includes/class-ino-platform-governance.php
+          grep -Fq "check_admin_referer" includes/class-ino-platform-governance.php
+          grep -Fq "START TRANSACTION" includes/class-ino-platform-governance.php
+          grep -Fq "document_hash" includes/class-ino-platform-governance.php
+          grep -Fq "prefers-reduced-motion:reduce" assets/css/ino-governance-foundation.css
+
+      - name: Verify operational governance source contracts
+        run: |
+          set -euo pipefail
+          test -s includes/class-ino-governance-operations.php
+          test -s includes/class-ino-governance-operations-ui.php
+          test -s assets/css/ino-governance-operations.css
+          test -s docs/governance-phase2-operations.md
+          grep -Fq 'ino_gov_ops_schema_version' includes/class-ino-governance-operations.php
+          grep -Fq 'ino_gov_minute_versions' includes/class-ino-governance-operations.php
+          grep -Fq 'ino_gov_resolutions' includes/class-ino-governance-operations.php
+          grep -Fq 'ino_gov_notifications' includes/class-ino-governance-operations.php
+          grep -Fq 'ino_gov_ops_events' includes/class-ino-governance-operations.php
+          grep -Fq 'check_admin_referer' includes/class-ino-governance-operations.php
+          grep -Fq "current_user_can('ino_governance_publish')" includes/class-ino-governance-operations-ui.php
+          grep -Fq 'outcome_recorded' includes/class-ino-governance-operations.php
+          grep -Fq 'decision_attestation' includes/class-ino-governance-operations.php
+          grep -Fq 'read_notice' includes/class-ino-governance-operations.php
+          grep -Fq 'START TRANSACTION' includes/class-ino-governance-operations.php
+          grep -Fq 'prefers-reduced-motion:reduce' assets/css/ino-governance-operations.css
+          # Release versions are asserted in the most recent phase's contract,
+          # rather than requiring the old Phase 2 version on later release candidates.
+
+
+      - name: Verify ODIN Phase 3 privacy and provenance contracts
+        run: |
+          set -euo pipefail
+          test -s includes/class-ino-governance-odin.php
+          test -s includes/class-ino-governance-odin-ui.php
+          test -s assets/css/ino-governance-odin.css
+          test -s docs/governance-phase3-odin-transparency.md
+          grep -Fq "ino_odin_schema_version" includes/class-ino-governance-odin.php
+          grep -Fq "ino_odin_versions" includes/class-ino-governance-odin.php
+          grep -Fq "ino_odin_signature_evidence" includes/class-ino-governance-odin.php
+          grep -Fq "ino_odin_events" includes/class-ino-governance-odin.php
+          grep -Fq "ino_governance_review" includes/class-ino-governance-odin.php
+          grep -Fq "ino_governance_publish" includes/class-ino-governance-odin.php
+          grep -Fq "check_admin_referer" includes/class-ino-governance-odin.php
+          grep -Fq "hash_equals" includes/class-ino-governance-odin.php
+          grep -Fq "START TRANSACTION" includes/class-ino-governance-odin.php
+          grep -Fq "AND g.visibility='public'" includes/class-ino-governance-odin.php
+          grep -Fq "g.status='published'" includes/class-ino-governance-odin.php
+          grep -Fq "ino_odin_verify" includes/class-ino-governance-odin.php
+          grep -Fq "prefers-reduced-motion:reduce" assets/css/ino-governance-odin.css
+          grep -Fq "Version: 1.5.0-rc.1" ino-platform.php
+          grep -Fq "define('INO_PLATFORM_VERSION', '1.5.0-rc.1')" ino-platform.php

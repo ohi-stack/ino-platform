@@ -1,0 +1,71 @@
+name: INO Governance Real WordPress Integration
+on:
+  push:
+    branches:
+      - 'feat/ino-wp-staging-workflow-*'
+  pull_request:
+    branches:
+      - 'feat/ino-odin-transparency-phase3-20261010'
+permissions:
+  contents: read
+jobs:
+  wordpress-staging:
+    name: WordPress / MariaDB governance workflow
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MARIADB_DATABASE: ino_stage_db
+          MARIADB_USER: ino_stage
+          MARIADB_PASSWORD: ino_stage_test_pw
+          MARIADB_ROOT_PASSWORD: isolated_test_root_pw
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=12
+    env:
+      WP_ROOT: /tmp/ino-wp-isolated-staging
+    steps:
+      - name: Check out exact source revision
+        uses: actions/checkout@v4
+      - name: Set up PHP runtime
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mysqli, mbstring, curl, dom, zip, json
+          coverage: none
+      - name: Install WP-CLI
+        run: |
+          set -euo pipefail
+          curl -fsSL https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o /tmp/wp-cli.phar
+          php /tmp/wp-cli.phar --info
+          sudo install -m 0755 /tmp/wp-cli.phar /usr/local/bin/wp
+      - name: Provision isolated real WordPress site
+        run: |
+          set -euo pipefail
+          mkdir -p "$WP_ROOT"
+          wp core download --path="$WP_ROOT" --quiet
+          wp config create --path="$WP_ROOT" --dbname=ino_stage_db \
+            --dbuser=ino_stage --dbpass=ino_stage_test_pw --dbhost=127.0.0.1:3306 --quiet
+          wp core install --path="$WP_ROOT" --url=http://localhost:8081 \
+            --title="INO isolated integration test" --admin_user=admin_test \
+            --admin_password=synthetic-ci-only-password --admin_email=admin@example.invalid --quiet
+          mkdir -p "$WP_ROOT/wp-content/plugins/ino-platform"
+          rsync -a --exclude .git --exclude .github --exclude tests \
+            --exclude staging-governance-results.txt ./ "$WP_ROOT/wp-content/plugins/ino-platform/"
+          wp plugin activate ino-platform --path="$WP_ROOT" --quiet
+          wp plugin status ino-platform --path="$WP_ROOT"
+      - name: Execute complete governance workflow, permission denials and audit rollback
+        run: bash tests/staging/run.sh
+      - name: Upload audit-safe integration results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ino-wordpress-governance-integration-${{ github.run_id }}
+          path: staging-governance-results.txt
+          if-no-files-found: ignore

@@ -11,9 +11,17 @@ class INO_Platform_Activator {
     }
 
     private static function create_roles() {
-        add_role('ino_member', 'INO Member', array('read' => true, 'upload_files' => true));
-        add_role('ino_volunteer', 'INO Volunteer', array('read' => true, 'upload_files' => true));
-        add_role('ino_program_manager', 'INO Program Manager', array('read' => true, 'upload_files' => true, 'edit_posts' => true));
+        add_role('ino_member', 'INO Member', array('read' => true));
+        add_role('ino_volunteer', 'INO Volunteer', array('read' => true));
+        add_role('ino_program_manager', 'INO Program Manager', array('read' => true));
+        // Older role definitions persist across upgrades. Remove unintended WordPress media/post rights.
+        foreach (array('ino_member','ino_volunteer','ino_program_manager') as $name) {
+            $role = get_role($name);
+            if ($role) {
+                $role->remove_cap('upload_files');
+                if ($name === 'ino_program_manager') { $role->remove_cap('edit_posts'); }
+            }
+        }
     }
 
     private static function create_tables() {
@@ -128,6 +136,13 @@ class INO_Platform_Activator {
             'ino-housing-development' => array('INO Housing Development','[ino_housing]'),
             'ino-document-registry' => array('INO Document Registry','[ino_documents]'),
             'ino-governance' => array('INO Governance','[ino_governance]'),
+            'ino-governance-operations' => array('INO Governance Operations','[ino_governance_operations]'),
+            'ino-odin-registry' => array('ODIN Public Registry','[ino_odin_registry]'),
+            'ino-odin-verify' => array('Verify ODIN Record','[ino_odin_verify]'),
+            'ino-odin-timeline' => array('ODIN Historical Timeline','[ino_odin_timeline]'),
+            'ino-constitution' => array('INO Constitution Registry','[ino_constitution]'),
+            'ino-governance-structure' => array('INO Governance Structure','[ino_governance_structure]'),
+            'ino-public-records' => array('INO Public Governance Records','[ino_governance_records]'),
             'ino-community-programs' => array('INO Community Programs','[ino_community]'),
             'ino-contact' => array('Contact INO','[ino_contact_form]')
         );

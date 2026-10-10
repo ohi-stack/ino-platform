@@ -1,0 +1,44 @@
+/* INO public / member visual system; styles are scoped to plugin shells. */
+.ino-shell{--ino-navy:#0D2B45;--ino-deep:#071B2D;--ino-red:#A5070A;--ino-gold:#C99A2E;--ino-light-gold:#E2C56F;--ino-cream:#F3E7BD;--ino-soft:#FAF4DF;--ino-ink:#102B45;--ino-muted:#566e7b;max-width:1220px;margin:0 auto;padding:45px 22px;color:var(--ino-ink)}
+.ino-shell *{box-sizing:border-box}
+.ino-shell a:focus-visible,.ino-shell button:focus-visible,.ino-shell input:focus-visible{outline:3px solid var(--ino-red);outline-offset:3px}
+.ino-shell .ino-hero-public{position:relative;isolation:isolate;overflow:hidden;padding:clamp(37px,6.5vw,86px);border-radius:24px;background:radial-gradient(circle at 79% 21%,rgba(226,197,111,.19),transparent 32%),linear-gradient(130deg,var(--ino-deep) 0%,var(--ino-navy) 60%,#153e54 100%);box-shadow:0 20px 50px rgba(7,27,45,.14);color:#fff}
+.ino-shell .ino-hero-public::after{content:"";position:absolute;z-index:-1;right:-11%;top:-58%;width:min(66%,530px);aspect-ratio:1;border:1px solid rgba(226,197,111,.24);border-radius:50%;box-shadow:0 0 0 50px rgba(226,197,111,.05),0 0 0 102px rgba(226,197,111,.035),0 0 0 156px rgba(226,197,111,.023);animation:ino-public-pulse 8s ease-in-out infinite alternate}
+.ino-shell .ino-portal-eyebrow{display:inline-flex;align-items:center;gap:9px;padding:8px 13px;border:1px solid rgba(226,197,111,.35);border-radius:999px;background:rgba(226,197,111,.08);color:var(--ino-light-gold);font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:800}
+.ino-shell .ino-hero-public h1{font-size:clamp(36px,5.5vw,68px);line-height:1.07;letter-spacing:-.025em;color:#fff!important;margin:24px 0 18px;max-width:750px}
+.ino-shell .ino-hero-public .ino-portal-lead{font-size:clamp(16px,1.9vw,19px);max-width:665px;line-height:1.7;color:#ecf2f5;margin:0}
+.ino-shell .ino-portal-actions{display:flex;flex-wrap:wrap;gap:11px;margin-top:29px}
+.ino-shell .ino-portal-actions .ino-btn,.ino-shell .ino-link-pill{border-radius:10px;transition:transform .2s ease,box-shadow .2s ease}
+.ino-shell .ino-portal-actions .ino-btn:hover,.ino-shell .ino-link-pill:hover{transform:translateY(-2px);box-shadow:0 10px 20px rgba(0,0,0,.14)}
+.ino-shell .ino-portal-outline{display:inline-block;border:1px solid rgba(255,255,255,.6);color:#fff!important;padding:12px 18px;border-radius:10px;text-decoration:none;font-weight:800}
+.ino-shell .ino-portal-strap{display:flex;flex-wrap:wrap;gap:8px;margin-top:33px}
+.ino-shell .ino-portal-strap span{border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:7px 11px;background:rgba(255,255,255,.06);color:#e1e9ed;font-size:12px}
+.ino-shell .ino-portal-section{padding:38px 0 0}
+.ino-shell .ino-portal-section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:15px;flex-wrap:wrap;margin:0 0 17px}
+.ino-shell .ino-portal-section-head h2{font-size:clamp(26px,3.3vw,36px);line-height:1.15;color:var(--ino-deep);margin:5px 0}
+.ino-shell .ino-portal-section-head p{max-width:650px;color:var(--ino-muted);font-size:15px;line-height:1.65;margin:0}
+.ino-shell .ino-portal-label{font-weight:850;font-size:11px;letter-spacing:.12em;color:var(--ino-red);text-transform:uppercase}
+.ino-shell .ino-service-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.ino-shell .ino-service-card{background:#fff;border:1px solid #dce5e9;padding:27px;border-radius:18px;box-shadow:0 10px 25px rgba(15,45,64,.045);transition:transform .24s,border-color .24s,box-shadow .24s;animation:ino-public-enter .65s both}
+.ino-shell .ino-service-card:nth-child(2),.ino-shell .ino-service-card:nth-child(5){animation-delay:.08s}
+.ino-shell .ino-service-card:nth-child(3),.ino-shell .ino-service-card:nth-child(6){animation-delay:.16s}
+.ino-shell .ino-service-card:hover{transform:translateY(-4px);border-color:var(--ino-gold);box-shadow:0 15px 32px rgba(15,45,64,.11)}
+.ino-shell .ino-service-symbol{display:grid;place-items:center;width:43px;height:43px;border-radius:13px;background:var(--ino-soft);color:var(--ino-red);border:1px solid #e8dcae;font-size:13px;font-weight:850;letter-spacing:.04em}
+.ino-shell .ino-service-card h3{color:var(--ino-ink);margin:17px 0 9px;font-size:21px}
+.ino-shell .ino-service-card p{color:var(--ino-muted);font-size:14px;line-height:1.7;min-height:71px}
+.ino-shell .ino-service-card a{font-weight:800;color:var(--ino-navy);text-decoration:none}
+.ino-shell .ino-service-card a:hover{text-decoration:underline}
+.ino-shell .ino-portal-banner{background:var(--ino-soft);border:1px solid #eadbad;border-radius:18px;padding:24px;margin-top:25px;display:flex;justify-content:space-between;gap:20px;align-items:center}
+.ino-shell .ino-portal-banner strong{color:var(--ino-deep);font-size:17px}
+.ino-shell .ino-portal-banner p{margin:7px 0 0;color:#4e6470;line-height:1.6}
+.ino-shell .ino-member-widget-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;margin-top:18px}
+.ino-shell .ino-member-widget{border:1px solid #dce5e9;background:#fff;border-radius:16px;padding:22px}
+.ino-shell .ino-member-widget strong{display:block;font-size:28px;line-height:1.3;color:var(--ino-deep);font-variant-numeric:tabular-nums}
+.ino-shell .ino-member-widget span{display:block;color:var(--ino-muted);margin-top:7px;font-weight:700;font-size:13px}
+.ino-shell .ino-member-widget a{display:inline-block;margin-top:14px;color:var(--ino-red);font-size:13px;font-weight:800;text-decoration:none}
+.ino-shell .ino-member-notice{padding:17px 20px;background:var(--ino-soft);border-left:4px solid var(--ino-gold);border-radius:0 12px 12px 0;margin-top:20px;font-size:13px;line-height:1.6}
+@keyframes ino-public-pulse{to{opacity:.55;transform:scale(1.06)}}
+@keyframes ino-public-enter{from{opacity:0;transform:translateY(13px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:900px){.ino-shell .ino-service-grid,.ino-shell .ino-member-widget-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:590px){.ino-shell{padding:24px 14px}.ino-shell .ino-service-grid,.ino-shell .ino-member-widget-grid{grid-template-columns:1fr}.ino-shell .ino-portal-banner{flex-direction:column;align-items:flex-start}.ino-shell .ino-service-card p{min-height:0}.ino-shell .ino-hero-public{padding:32px 23px}}
+@media(prefers-reduced-motion:reduce){.ino-shell *, .ino-shell *:before,.ino-shell *:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
