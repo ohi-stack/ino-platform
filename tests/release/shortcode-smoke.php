@@ -12,6 +12,7 @@ ino_rc_check(defined('INO_PLATFORM_VERSION') && INO_PLATFORM_VERSION==='1.5.1-rc
 ino_rc_check(defined('INO_PLATFORM_SCHEMA_VERSION') && 
     get_option('ino_platform_schema_version')===INO_PLATFORM_SCHEMA_VERSION,'schema marker established without resetting governance');
 ino_rc_check(shortcode_exists('ino_member_dashboard'),'member dashboard compatibility shortcode registered');
+ino_rc_check(has_action('template_redirect',array('INO_Platform_Release','private_page_headers'))!==false,'account-sensitive page response uses no-cache hook');
 ino_rc_check(shortcode_exists('ino_governance'),'governance portal shortcode registered');
 ino_rc_check(shortcode_exists('ino_governance_operations'),'operations shortcode registered');
 ino_rc_check(shortcode_exists('ino_odin_registry') && shortcode_exists('ino_odin_verify'),'ODIN publication and verification shortcode registered');
