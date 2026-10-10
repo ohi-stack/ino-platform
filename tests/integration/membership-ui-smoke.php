@@ -100,6 +100,32 @@ $_GET=array('ino_member_state'=>'pending');
 ob_start();INO_Platform_Membership_UI::admin_page();$pending_rows=ob_get_clean();
 ino_mui_check(strpos($pending_rows,$other->member_id)!==false &&
     strpos($pending_rows,$member->member_id)===false,'status filter restricts server-side roster');
+// Public directory must honor the newest explicit membership status/consent.
+$revoked_actor=get_user_by('login','ino_stage_records');
+ino_mui_check($revoked_actor,'third isolated account available for consent revocation test');
+$members_table=$wpdb->prefix.'ino_members';
+foreach (array(
+    array('INO-STAGE-REV-001','Approved',1),
+    array('INO-STAGE-REV-002','Pending',0)
+) as $fixture) {
+    $existing=$wpdb->get_var($wpdb->prepare("SELECT id FROM {$members_table} WHERE member_id=%s",$fixture[0]));
+    if (!$existing) {
+        $ok=$wpdb->insert($members_table,array(
+            'user_id'=>$revoked_actor->ID,'member_id'=>$fixture[0],
+            'status'=>$fixture[1],'public_consent'=>$fixture[2],
+            'first_name'=>'Privacy','last_name'=>'Revocation',
+            'created_at'=>current_time('mysql')
+        ));
+        ino_mui_check((bool)$ok,'revocation fixture safely inserted');
+    }
+}
+wp_set_current_user(0);
+$directory=do_shortcode('[ino_member_directory]');
+$person=do_shortcode('[ino_member_profile user_id="'.$revoked_actor->ID.'"]');
+ino_mui_check(strpos($directory,'Privacy Revocation')===false,
+    'withdrawn directory consent blocks public listing despite older approval');
+ino_mui_check(strpos($person,'private or unavailable')!==false,
+    'withdrawn consent protects direct public member-profile access');
 $_GET=array();
 wp_set_current_user(0);
 ino_mui_check(has_action('admin_enqueue_scripts',array('INO_Platform_Membership_UI','admin_assets'))!==false,
