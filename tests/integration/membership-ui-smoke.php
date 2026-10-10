@@ -29,7 +29,12 @@ $other=$wpdb->get_row($wpdb->prepare(
 ino_mui_check($member && $other && $member->status==='Approved' && $other->status==='Pending',
     'latest-record status fixtures include approval and pending');
 $private_phrase='FORBIDDEN-MEMBER-ANCESTRY-EXPOSURE-SECRET';
-$created=$wpdb->insert($wpdb->prefix.'ino_identity_declarations',array(
+$declarations_table=$wpdb->prefix.'ino_identity_declarations';
+$exists=(int)$wpdb->get_var($wpdb->prepare(
+    "SELECT COUNT(*) FROM {$declarations_table} WHERE user_id=%d AND family_narrative=%s",
+    $approved->ID,$private_phrase
+));
+$created=$exists?true:$wpdb->insert($declarations_table,array(
     'user_id'=>$approved->ID,
     'ancestral_people'=>'Only private source',
     'family_narrative'=>$private_phrase,
@@ -37,15 +42,20 @@ $created=$wpdb->insert($wpdb->prefix.'ino_identity_declarations',array(
     'review_status'=>'pending',
     'created_at'=>current_time('mysql')
 ));
-ino_mui_check((bool)$created,'private declaration fixture inserted');
-$created2=$wpdb->insert($wpdb->prefix.'ino_identity_declarations',array(
+ino_mui_check((bool)$created,'private declaration fixture recorded or retained');
+$other_phrase='ANOTHER-ACCOUNT-PRIVATE-CONTENT';
+$exists=(int)$wpdb->get_var($wpdb->prepare(
+    "SELECT COUNT(*) FROM {$declarations_table} WHERE user_id=%d AND family_narrative=%s",
+    $pending->ID,$other_phrase
+));
+$created2=$exists?true:$wpdb->insert($declarations_table,array(
     'user_id'=>$pending->ID,
-    'family_narrative'=>'ANOTHER-ACCOUNT-PRIVATE-CONTENT',
+    'family_narrative'=>$other_phrase,
     'verification_status'=>'Self-declared',
     'review_status'=>'pending',
     'created_at'=>current_time('mysql')
 ));
-ino_mui_check((bool)$created2,'separate member declaration fixture inserted');
+ino_mui_check((bool)$created2,'other member fixture recorded or retained');
 wp_set_current_user(0);
 $guest=do_shortcode('[ino_member_dashboard]');
 ino_mui_check(strpos($guest,'Membership Dashboard')!==false &&
