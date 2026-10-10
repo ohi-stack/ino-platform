@@ -30,7 +30,8 @@ jobs:
           test -s assets/css/ino-public-platform.css
           test -s assets/js/ino-admin-command.js
           grep -Fq 'data-ino-series' includes/class-ino-platform-admin.php
-          grep -Fq 'public_consent = 1' includes/class-ino-platform-shortcodes.php
+          grep -Fq 'm.public_consent=1' includes/class-ino-platform-shortcodes.php
+          grep -Fq 'MAX(id) AS latest_id' includes/class-ino-platform-shortcodes.php
           grep -Fq "status='approved'" includes/class-ino-platform-shortcodes.php
           grep -Fq 'prefers-reduced-motion:reduce' assets/css/ino-admin-command.css
           grep -Fq 'prefers-reduced-motion:reduce' assets/css/ino-public-platform.css
