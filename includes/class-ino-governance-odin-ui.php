@@ -36,6 +36,7 @@ class INO_Governance_ODIN_UI {
         $counts=INO_Governance_ODIN::private_counts();
         $evidence=INO_Governance_ODIN::evidence_counts(array_map(function($v){return (int)$v->id;},$versions));
         $events=INO_Governance_ODIN::admin_audit();
+        $evidence_details=INO_Governance_ODIN::admin_evidence();
         $source_table=$wpdb->prefix.'ino_governance_items';
         $sources=$wpdb->get_results("SELECT id,title FROM {$source_table} WHERE status='published' AND visibility='public' ORDER BY title ASC LIMIT 200");
         $latest=array();$seen=array();
@@ -118,6 +119,14 @@ class INO_Governance_ODIN_UI {
         if (!$versions) { echo '<tr><td colspan="5">No registered documents.</td></tr>'; }
         foreach ($versions as $v) {
             echo '<tr><td><code>'.esc_html($v->odin_id).'</code><br>Version '.esc_html($v->version_no).'</td><td>'.esc_html($v->title).'<details><summary>Full recorded summary</summary><p>'.nl2br(esc_html($v->summary)).'</p></details></td><td>'.esc_html($v->status).'</td><td>'.esc_html($v->source_ref).'<br>Phase 1 #'.esc_html($v->source_item_id?:'—').'</td><td>'.esc_html(isset($evidence[(int)$v->id])?$evidence[(int)$v->id]:0).'</td></tr>';
+        }
+        echo '</tbody></table></div></section>';
+
+
+        echo '<section class="ino-panel"><h2>Signature Evidence Ledger (restricted)</h2><p class="ino-panel-help">Staff observations and source references; NOT applied or cryptographically verified signatures.</p><div class="ino-odin-table"><table class="ino-table"><thead><tr><th>Version</th><th>Witness actor</th><th>Evidence reference</th><th>Recorded observation</th><th>Recorded at</th></tr></thead><tbody>';
+        if (!$evidence_details) { echo '<tr><td colspan="5">No signature evidence references recorded.</td></tr>'; }
+        foreach ($evidence_details as $item) {
+            echo '<tr><td>'.esc_html($item->version_id).'</td><td>'.esc_html($item->witness_user_id).'</td><td>'.esc_html($item->evidence_ref).'</td><td>'.esc_html($item->attestation).'</td><td>'.esc_html($item->created_at).'</td></tr>';
         }
         echo '</tbody></table></div></section>';
 
