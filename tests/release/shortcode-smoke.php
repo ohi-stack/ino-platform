@@ -8,10 +8,12 @@ function ino_rc_check($condition,$description) {
     if (!$condition) { WP_CLI::error('FAIL '.$description); }
     WP_CLI::log('PASS '.$description);
 }
-ino_rc_check(defined('INO_PLATFORM_VERSION') && INO_PLATFORM_VERSION==='1.6.0-rc.1','packaged release version consistent');
+ino_rc_check(defined('INO_PLATFORM_VERSION') && INO_PLATFORM_VERSION==='1.6.1-rc.1','packaged release version consistent');
 ino_rc_check(defined('INO_PLATFORM_SCHEMA_VERSION') && 
     get_option('ino_platform_schema_version')===INO_PLATFORM_SCHEMA_VERSION,'schema marker established without resetting governance');
 ino_rc_check(shortcode_exists('ino_member_dashboard'),'member dashboard compatibility shortcode registered');
+ino_rc_check(shortcode_exists('ino_membership_portal'),'new membership landing page shortcode registered');
+ino_rc_check(class_exists('INO_Platform_Membership_UI'),'membership admin and member UI class is available');
 ino_rc_check(shortcode_exists('ino_voting') && shortcode_exists('ino_vote_results') && shortcode_exists('ino_my_votes'),'INO Voting shortcodes registered');
 ino_rc_check(get_option('ino_voting_schema_version')===INO_Platform_Voting::SCHEMA,'voting schema retained');
 ino_rc_check(class_exists('INO_Platform_BuddyPress'),'BuddyPress integration controller exists');
@@ -36,7 +38,7 @@ $guest=do_shortcode('[ino_member_dashboard]');
 ino_rc_check(strpos($guest,'Please log in')!==false,'anonymous dashboard renders sign-in boundary');
 wp_set_current_user((int)$member->ID);
 $member_view=do_shortcode('[ino_member_dashboard]');
-ino_rc_check(strpos($member_view,'Private member workspace')!==false,'authenticated member dashboard renders');
+ino_rc_check(strpos($member_view,'Welcome to Your Membership Portal')!==false,'authenticated member dashboard renders');
 ino_rc_check(strpos($member_view,'Identity declarations')!==false &&
     strpos($member_view,'Approved relationships')!==false,'member dashboard uses existing self-scoped count widgets');
 wp_set_current_user((int)$outsider->ID);
@@ -52,7 +54,9 @@ foreach (array(
     'assets/css/ino-governance-odin.css',
     'assets/js/ino-admin-command.js',
     'assets/css/ino-buddypress-admin.css',
-    'assets/css/ino-voting.css'
+    'assets/css/ino-voting.css',
+    'assets/css/ino-membership-ui.css',
+    'assets/js/ino-membership-ui.js'
 ) as $relative) {
     ino_rc_check(is_file(INO_PLATFORM_PATH.$relative),'packaged asset '.$relative);
 }
