@@ -22,6 +22,7 @@ require_once INO_PLATFORM_PATH . 'includes/class-ino-governance-operations.php';
 require_once INO_PLATFORM_PATH . 'includes/class-ino-governance-operations-ui.php';
 require_once INO_PLATFORM_PATH . 'includes/class-ino-governance-odin.php';
 require_once INO_PLATFORM_PATH . 'includes/class-ino-governance-odin-ui.php';
+require_once INO_PLATFORM_PATH . 'includes/class-ino-governance-clarification.php';
 
 register_activation_hook(__FILE__, array('INO_Platform_Activator', 'activate'));
 
@@ -31,6 +32,7 @@ add_action('plugins_loaded', function () {
     }
     INO_Platform_Governance::maybe_install();
     INO_Platform_Governance::init();
+    INO_Governance_Clarification::init();
     INO_Governance_Operations::install();
     INO_Governance_Operations::init();
     INO_Governance_ODIN::install();
