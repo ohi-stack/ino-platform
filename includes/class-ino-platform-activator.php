@@ -141,6 +141,7 @@ class INO_Platform_Activator {
             'ino-odin-verify' => array('Verify ODIN Record','[ino_odin_verify]'),
             'ino-odin-timeline' => array('ODIN Historical Timeline','[ino_odin_timeline]'),
             'ino-constitution' => array('INO Constitution Registry','[ino_constitution]'),
+            'ino-governance-clarification' => array('Proposed INO Self-Governance Clarification','[ino_governance_clarification]'),
             'ino-governance-structure' => array('INO Governance Structure','[ino_governance_structure]'),
             'ino-public-records' => array('INO Public Governance Records','[ino_governance_records]'),
             'ino-community-programs' => array('INO Community Programs','[ino_community]'),
