@@ -1,8 +1,26 @@
 # Indigenous Nation of Onegodia — INO Platform Plugin
 
-**Version:** 1.5.1-rc.1 — production-target WordPress package, **not approved for live activation without actual-site acceptance**.  
+**Version:** 1.5.2-rc.1 — production-target WordPress package, **not approved for live activation without actual-site acceptance**.  
 **Requires:** WordPress 6.5+, PHP 7.4+, transactional InnoDB-capable MySQL/MariaDB for governance audits.  
 **Installable ZIP root:** `ino-platform/ino-platform.php` (one plugin, not a nested deployment bundle).
+
+## BuddyPress Integration — Admin Workspace
+
+**WordPress route:** `/wp-admin/admin.php?page=ino-platform-buddypress`
+
+This release replaces the old informational placeholder with a working, site-administrator-only integration workspace:
+
+- Runtime health for BuddyPress core, Extended Profiles, Friends, avatars, native profile links and INO private tab eligibility.
+- Nonce-protected administration to enable/disable native connection requests, prefer BuddyPress media, and opt in to the **private** Family & Connections profile tab (default off).
+- Verified account-alignment lookups by WordPress user ID, showing INO membership state and public-directory consent without performing duplicate imports or rewriting INO membership classifications.
+- Consent-gated friend requests: only members who are approved and expressly opted into the INO public directory are eligible targets.
+- Logged administrative settings and diagnostic events with actor ID, timestamp, and no sensitive declarations.
+- No automatic creation of BuddyPress public xProfile fields from INO ancestral, family or identity data.
+- Clear boundary: BuddyPress maintains its own global member directory and privacy configuration; INO member-directory consent does **not** automatically change BuddyPress global directory rules.
+
+BuddyPress absence leaves independent INO pages and WordPress avatars available; native friends, avatar and cover features only activate when supported by the BuddyPress runtime. All records stay in the existing WordPress user ID and INO institutional tables. A private tab displays family records only to the subject member or authorized WordPress staff.
+
+**Unverified on the live domain:** installed BuddyPress version/components, theme integration, public BuddyPress directory privacy, real member settings, hosting and cache rules. Run acceptance tests on a staging clone.
 
 ## Current functional scope
 
