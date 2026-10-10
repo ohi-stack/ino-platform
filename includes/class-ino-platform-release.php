@@ -81,7 +81,34 @@ final class INO_Platform_Release {
         }
     }
 
+    public static function private_page_headers() {
+        if (!is_singular('page')) { return; }
+        $page=get_queried_object();
+        if (!$page || !($page instanceof WP_Post)) { return; }
+        $sensitive_slugs=array(
+            'ino-member-dashboard','identity-heritage-dashboard',
+            'member-profile','identity-declaration','family-tree',
+            'ino-governance-operations'
+        );
+        $sensitive_tags=array(
+            'ino_member_dashboard','ino_identity_dashboard',
+            'ino_member_profile','ino_identity_declaration',
+            'ino_family_tree','ino_governance_operations'
+        );
+        $sensitive=in_array($page->post_name,$sensitive_slugs,true);
+        foreach ($sensitive_tags as $tag) {
+            if (!$sensitive && has_shortcode((string)$page->post_content,$tag)) {
+                $sensitive=true;
+            }
+        }
+        if ($sensitive) {
+            if (!defined('DONOTCACHEPAGE')) { define('DONOTCACHEPAGE',true); }
+            nocache_headers();
+        }
+    }
+
     public static function init() {
+        add_action('template_redirect',array(__CLASS__,'private_page_headers'),0);
         add_action('admin_init',array(__CLASS__,'maybe_upgrade'),15);
         add_action('admin_notices',array(__CLASS__,'notices'));
     }
