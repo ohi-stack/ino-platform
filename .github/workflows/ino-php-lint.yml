@@ -95,8 +95,7 @@ jobs:
           grep -Fq "g.status='published'" includes/class-ino-governance-odin.php
           grep -Fq "ino_odin_verify" includes/class-ino-governance-odin.php
           grep -Fq "prefers-reduced-motion:reduce" assets/css/ino-governance-odin.css
-          grep -Fq "Version: 1.5.0-rc.1" ino-platform.php
-          grep -Fq "define('INO_PLATFORM_VERSION', '1.5.0-rc.1')" ino-platform.php
+          # Version pinned in the current release gate, not the older Phase 3 contract.
 
       - name: Verify release and member UI activation boundaries
         run: |
