@@ -1,0 +1,44 @@
+.ino-vote-public,.ino-vote-admin{--iv-ink:#091c2e;--iv-navy:#0d2b45;--iv-gold:#c99a2e;--iv-muted:#597083;--iv-border:#dce5e9;--iv-cream:#faf4df}
+.ino-vote-public{max-width:1190px;margin:0 auto;padding:40px 18px;color:var(--iv-ink)}
+.ino-vote-public *,.ino-vote-admin *{box-sizing:border-box}
+.ino-vote-hero{background:radial-gradient(circle at 80% 20%,rgba(230,190,90,.19),transparent 35%),linear-gradient(120deg,#071522,var(--iv-navy) 68%,#15506a);border-radius:20px;color:#fff;padding:clamp(26px,6vw,68px);margin-bottom:25px}
+.ino-vote-hero span{text-transform:uppercase;letter-spacing:.12em;color:#f4d68e;font-weight:800;font-size:12px}
+.ino-vote-hero h1{font-size:clamp(28px,5vw,48px);color:#fff;line-height:1.14;margin:12px 0}
+.ino-vote-hero p{color:#e3edf3;font-size:16px;max-width:840px;line-height:1.7}
+.ino-vote-card{padding:25px;border-radius:17px;background:#fff;border:1px solid var(--iv-border);box-shadow:0 12px 34px rgba(8,28,46,.06);margin:20px 0}
+.ino-vote-card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.ino-vote-kicker{color:#89611b;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.09em}
+.ino-vote-state{background:#e5efef;color:#124e54;font-size:12px;padding:6px 11px;border-radius:999px;font-weight:800}
+.ino-vote-card h3{font-size:clamp(21px,3vw,29px);margin:17px 0 8px;color:var(--iv-ink)}
+.ino-vote-card>p{color:var(--iv-muted);line-height:1.7}
+.ino-vote-meta{display:flex;gap:10px 23px;flex-wrap:wrap;font-size:12px;color:#526977;border-top:1px solid var(--iv-border);padding-top:13px;margin-top:20px}
+.ino-vote-ballot{margin-top:20px}
+.ino-vote-ballot fieldset{padding:0;border:0;margin:0 0 16px}
+.ino-vote-ballot legend{color:var(--iv-navy);font-weight:850;margin-bottom:15px}
+.ino-vote-option{display:flex;gap:12px;align-items:flex-start;background:#f7f9fa;border:1px solid #dce5e9;border-radius:12px;padding:15px;margin:9px 0;color:#12354c;cursor:pointer;font-weight:650}
+.ino-vote-option:hover{border-color:var(--iv-gold)}
+.ino-vote-option input{margin-top:3px;flex:none;accent-color:#0d2b45;width:17px;height:17px}
+.ino-vote-button,.ino-vote-small-button{cursor:pointer;background:#c99a2e;color:#071522;border:none;border-radius:10px;font-weight:850;padding:13px 20px}
+.ino-vote-button:hover,.ino-vote-small-button:hover{background:#b68721}
+.ino-vote-small-button{padding:8px 11px;font-size:12px}
+.ino-vote-small{font-size:12px;color:#577080;line-height:1.65}
+.ino-vote-message,.ino-vote-notice{background:#faf4df;border-left:3px solid #c99a2e;padding:14px 18px;border-radius:8px;color:#183952;margin:20px 0}
+.ino-vote-results{border-top:1px solid #dce5e9;margin-top:22px;padding-top:18px}
+.ino-vote-results h4{color:#071b2d;font-size:17px;margin:0 0 7px}
+.ino-vote-result{margin:14px 0}
+.ino-vote-result>div{display:flex;justify-content:space-between;gap:16px;color:#13344b}
+.ino-vote-result progress{width:100%;height:12px;accent-color:#c99a2e;border-radius:8px;overflow:hidden}
+.ino-vote-admin .ino-vote-editor{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;margin-top:21px}
+.ino-vote-admin .ino-vote-editor label{display:flex;flex-direction:column;gap:8px;font-weight:750;color:#102b45}
+.ino-vote-admin .ino-vote-editor label.ino-vote-wide,.ino-vote-admin .ino-vote-editor .ino-vote-wide{grid-column:1/-1}
+.ino-vote-admin .ino-vote-editor input,.ino-vote-admin .ino-vote-editor select,.ino-vote-admin .ino-vote-editor textarea{border:1px solid #c8d5db;border-radius:10px;padding:11px;max-width:100%;width:100%;background:#fff;color:#071522}
+.ino-vote-admin .ino-vote-editor button{justify-self:start}
+.ino-vote-admin .ino-vote-table{max-width:100%;overflow-x:auto}
+.ino-vote-admin .ino-vote-table table{min-width:850px}
+.ino-vote-admin .ino-vote-table td{max-width:280px;vertical-align:top;overflow-wrap:anywhere}
+.ino-vote-admin .ino-vote-actions{display:grid;align-items:start;gap:7px}
+.ino-vote-admin details{padding:8px 0;color:#12344a}
+.ino-vote-admin summary{cursor:pointer;font-weight:750}
+.ino-vote-public a:focus-visible,.ino-vote-public button:focus-visible,.ino-vote-public input:focus-visible,.ino-vote-admin button:focus-visible,.ino-vote-admin input:focus-visible,.ino-vote-admin textarea:focus-visible,.ino-vote-admin select:focus-visible{outline:3px solid #a5070a;outline-offset:3px}
+@media(max-width:680px){.ino-vote-admin .ino-vote-editor{grid-template-columns:1fr}.ino-vote-admin .ino-vote-editor label.ino-vote-wide,.ino-vote-admin .ino-vote-editor .ino-vote-wide{grid-column:auto}.ino-vote-card{padding:16px}}
+@media(prefers-reduced-motion:reduce){.ino-vote-public *, .ino-vote-admin *{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
