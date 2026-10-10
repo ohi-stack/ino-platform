@@ -73,3 +73,27 @@ jobs:
           grep -Fq 'prefers-reduced-motion:reduce' assets/css/ino-governance-operations.css
           grep -Fq "Version: 1.4.0-rc.1" ino-platform.php
           grep -Fq "define('INO_PLATFORM_VERSION', '1.4.0-rc.1')" ino-platform.php
+
+
+      - name: Verify ODIN Phase 3 privacy and provenance contracts
+        run: |
+          set -euo pipefail
+          test -s includes/class-ino-governance-odin.php
+          test -s includes/class-ino-governance-odin-ui.php
+          test -s assets/css/ino-governance-odin.css
+          test -s docs/governance-phase3-odin-transparency.md
+          grep -Fq "ino_odin_schema_version" includes/class-ino-governance-odin.php
+          grep -Fq "ino_odin_versions" includes/class-ino-governance-odin.php
+          grep -Fq "ino_odin_signature_evidence" includes/class-ino-governance-odin.php
+          grep -Fq "ino_odin_events" includes/class-ino-governance-odin.php
+          grep -Fq "ino_governance_review" includes/class-ino-governance-odin.php
+          grep -Fq "ino_governance_publish" includes/class-ino-governance-odin.php
+          grep -Fq "check_admin_referer" includes/class-ino-governance-odin.php
+          grep -Fq "hash_equals" includes/class-ino-governance-odin.php
+          grep -Fq "START TRANSACTION" includes/class-ino-governance-odin.php
+          grep -Fq "AND g.visibility='public'" includes/class-ino-governance-odin.php
+          grep -Fq "g.status='published'" includes/class-ino-governance-odin.php
+          grep -Fq "ino_odin_verify" includes/class-ino-governance-odin.php
+          grep -Fq "prefers-reduced-motion:reduce" assets/css/ino-governance-odin.css
+          grep -Fq "Version: 1.5.0-rc.1" ino-platform.php
+          grep -Fq "define('INO_PLATFORM_VERSION', '1.5.0-rc.1')" ino-platform.php
