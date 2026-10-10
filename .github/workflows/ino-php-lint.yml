@@ -71,8 +71,8 @@ jobs:
           grep -Fq 'read_notice' includes/class-ino-governance-operations.php
           grep -Fq 'START TRANSACTION' includes/class-ino-governance-operations.php
           grep -Fq 'prefers-reduced-motion:reduce' assets/css/ino-governance-operations.css
-          grep -Fq "Version: 1.4.0-rc.1" ino-platform.php
-          grep -Fq "define('INO_PLATFORM_VERSION', '1.4.0-rc.1')" ino-platform.php
+          # Release versions are asserted in the most recent phase's contract,
+          # rather than requiring the old Phase 2 version on later release candidates.
 
 
       - name: Verify ODIN Phase 3 privacy and provenance contracts
