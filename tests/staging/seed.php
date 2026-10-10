@@ -24,7 +24,7 @@ foreach ($required as $suffix) {
     }
 }
 foreach (array(
-    'records'=>array('ino_gov_records','ino_gov_records_officer'),
+    'records'=>array('ino_gov_records_officer','ino_gov_records_officer'),
     'reviewer'=>array('ino_gov_reviewer','ino_gov_reviewer'),
     'publisher'=>array('ino_gov_publisher','ino_gov_publisher'),
     'viewer'=>array('subscriber','subscriber'),
