@@ -348,7 +348,8 @@ class INO_Platform_Governance {
         foreach (array(
             array('Constitution Registry','/ino-constitution/','Review published constitutional versions'),
             array('Organizational Structure','/ino-governance-structure/','Explore documented INO office structures'),
-            array('Public Governance Records','/ino-public-records/','Browse published institutional record summaries')
+            array('Public Governance Records','/ino-public-records/','Browse published institutional record summaries'),
+            array('ODIN Document Registry','/ino-odin-registry/','Browse source-linked public document versions and history')
         ) as $link) {
             $html .= '<article class="ino-gov-tile"><h2>' . esc_html($link[0]) . '</h2><p>' . esc_html($link[2]) . '</p><a href="' . esc_url(home_url($link[1])) . '">Explore records ↗</a></article>';
         }
@@ -419,6 +420,7 @@ class INO_Platform_Governance {
             echo '<div class="ino-note" role="status">' . esc_html(sanitize_text_field(wp_unslash($_GET['ino_gov_notice']))) . '</div>';
         }
         echo '<p><a class="ino-btn ino-btn-gold" href="' . esc_url(INO_Governance_Operations::url()) . '">Open Operational Governance ↗</a></p>';
+        echo '<p><a class="ino-btn ino-btn-gold" href="' . esc_url(INO_Governance_ODIN::admin_url()) . '">Open ODIN Registry ↗</a></p>';
         echo '<div class="ino-section-heading"><div><h2>Governance records</h2><p>Live database counts separated by review status.</p></div></div><div class="ino-grid">';
         foreach (array('constitution'=>'Constitution editions','office'=>'Structure offices','record'=>'Other governance records') as $type=>$label) {
             $total = array_sum($counts[$type]);
