@@ -30,13 +30,12 @@ check(){
 # Use actual runtime-relative dates, independent of the calendar month.
 START="$(date -u -d 'yesterday' '+%Y-%m-%dT%H:%M')"
 END="$(date -u -d 'tomorrow' '+%Y-%m-%dT%H:%M')"
-admin1="$(printf '{"title":"Approve a new garden","description":"Synthetic, nonbinding community consultation only.","category":"Community","electorate":"approved_members","ballot_type":"single","max_choices":1,"results_policy":"after_close","opens_at":"%s","closes_at":"%s","option_lines":"Yes\nNo"}' "$START" "$END")"
-admin2="$(printf '{"title":"Which services first","description":"Nonbinding multiple-choice test.","category":"Services","electorate":"registered","ballot_type":"multiple","max_choices":2,"results_policy":"admins_only","opens_at":"%s","closes_at":"%s","option_lines":"Housing\nEducation\nTransport"}' "$START" "$END")"
-admin3="$(printf '{"title":"Audit rollback test","description":"Transient poll used to test write failures.","category":"Testing","electorate":"registered","ballot_type":"single","max_choices":1,"results_policy":"admins_only","opens_at":"%s","closes_at":"%s","option_lines":"Accept\nReject"}' "$START" "$END")"
-# printf '%b' not used; encode literal newlines as escaped JSON sequences.
-admin1="$(printf '%s' "$admin1" | python3 -c 'import sys; x=sys.stdin.read(); print(x.replace("\"option_lines\":\"Yes\nNo\"", "\"option_lines\":\"Yes\\\\nNo\""))')"
-admin2="$(printf '%s' "$admin2" | python3 -c 'import sys; x=sys.stdin.read(); print(x.replace("\"option_lines\":\"Housing\nEducation\nTransport\"", "\"option_lines\":\"Housing\\\\nEducation\\\\nTransport\""))')"
-admin3="$(printf '%s' "$admin3" | python3 -c 'import sys; x=sys.stdin.read(); print(x.replace("\"option_lines\":\"Accept\nReject\"", "\"option_lines\":\"Accept\\\\nReject\""))')"
+admin1="$(jq -nc --arg start "$START" --arg end "$END" --arg options $'Yes\nNo' \
+  '{title:"Approve a new garden",description:"Synthetic nonbinding consultation",category:"Community",electorate:"approved_members",ballot_type:"single",max_choices:1,results_policy:"after_close",opens_at:$start,closes_at:$end,option_lines:$options}')"
+admin2="$(jq -nc --arg start "$START" --arg end "$END" --arg options $'Housing\nEducation\nTransport' \
+  '{title:"Which services first",description:"Nonbinding multi-choice test",category:"Services",electorate:"registered",ballot_type:"multiple",max_choices:2,results_policy:"admins_only",opens_at:$start,closes_at:$end,option_lines:$options}')"
+admin3="$(jq -nc --arg start "$START" --arg end "$END" --arg options $'Accept\nReject' \
+  '{title:"Audit rollback test",description:"Ballot audit failure test",category:"Testing",electorate:"registered",ballot_type:"single",max_choices:1,results_policy:"admins_only",opens_at:$start,closes_at:$end,option_lines:$options}')"
 wp eval-file tests/voting/seed.php --path="$WP_ROOT" --quiet
 check baseline
 reject 'ordinary user cannot create poll' ino_stage_outsider manage create "$admin1"
