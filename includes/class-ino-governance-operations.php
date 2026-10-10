@@ -163,7 +163,13 @@ class INO_Governance_Operations {
         return function_exists('mb_substr') ? mb_substr($value,0,$max) : substr($value,0,$max);
     }
     private static function number($key) {
-        return isset($_POST[$key]) ? absint($_POST[$key]) : 0;
+        if (!isset($_POST[$key]) || $_POST[$key] === '') { return 0; }
+        $value = (string)wp_unslash($_POST[$key]);
+        if (!preg_match('/^(0|[1-9][0-9]*)$/D', $value)) {
+            self::fail('A nonnegative whole number is required for '.$key.'.');
+        }
+        if (strlen($value) > 15) { self::fail('Numeric value exceeds safe range.'); }
+        return (int)$value;
     }
     private static function date_value($key, $time=false) {
         $s=self::text($key,30);
@@ -285,6 +291,7 @@ class INO_Governance_Operations {
     private static function hold_meeting() {
         $m=self::get('meetings',self::number('meeting_id'));
         if ($m->status!=='scheduled') { self::fail('Only scheduled meetings may be recorded as held.',409); }
+        if ($m->meeting_at > current_time('mysql')) { self::fail('A future meeting cannot be recorded as held.',409); }
         $n=self::number('attendance_count'); $e=self::paragraph('attendance_evidence',3000);
         if (!$n || strlen($e)<12) { self::fail('Attendance count and attendance evidence reference required.'); }
         self::transition_audited('meetings',$m->id,'scheduled',array(
