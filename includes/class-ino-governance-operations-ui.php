@@ -47,13 +47,15 @@ class INO_Governance_Operations_UI {
         $res_table=INO_Governance_Operations::table('resolutions');
         $task_table=INO_Governance_Operations::table('tasks');
         $notice_table=INO_Governance_Operations::table('notices');
+        $events_table=INO_Governance_Operations::table('events');
         $meetings=$wpdb->get_results("SELECT * FROM {$meet_table} ORDER BY meeting_at DESC,id DESC LIMIT 60");
         $agenda=$wpdb->get_results("SELECT id,meeting_id,sequence_no,topic,briefing FROM {$agenda_table} ORDER BY id DESC LIMIT 60");
-        $minutes=$wpdb->get_results("SELECT id,meeting_id,revision,status,created_by,source_ref FROM {$minutes_table} ORDER BY id DESC LIMIT 35");
-        $resolutions=$wpdb->get_results("SELECT id,ref_code,title,meeting_id,status,created_by,reviewed_by,outcome FROM {$res_table} ORDER BY id DESC LIMIT 60");
+        $minutes=$wpdb->get_results("SELECT id,meeting_id,revision,status,created_by,source_ref,minutes_text FROM {$minutes_table} ORDER BY id DESC LIMIT 35");
+        $resolutions=$wpdb->get_results("SELECT id,ref_code,title,meeting_id,status,created_by,reviewed_by,outcome,motion_text,authority_ref,decision_evidence,quorum_evidence,votes_for,votes_against,abstentions FROM {$res_table} ORDER BY id DESC LIMIT 60");
         $uid=get_current_user_id();
         $tasks=$wpdb->get_results($wpdb->prepare("SELECT id,source_type,source_id,title,assignee_id,due_on,status FROM {$task_table} WHERE assignee_id=%d OR created_by=%d ORDER BY id DESC LIMIT 60",$uid,$uid));
         $notices=$wpdb->get_results($wpdb->prepare("SELECT id,subject,message,is_read,created_at FROM {$notice_table} WHERE recipient_id=%d ORDER BY id DESC LIMIT 30",$uid));
+        $events=$wpdb->get_results("SELECT entity_type,entity_id,event_key,actor_id,detail,created_at FROM {$events_table} ORDER BY id DESC LIMIT 30");
         $offices=$wpdb->get_results("SELECT id,title FROM {$wpdb->prefix}ino_governance_items WHERE record_type='office' AND status='published' ORDER BY title ASC LIMIT 100");
         $users=get_users(array('number'=>200,'orderby'=>'display_name','order'=>'ASC','fields'=>array('ID','display_name')));
         $authorized_users=array();
@@ -130,6 +132,9 @@ class INO_Governance_Operations_UI {
             self::form_end('Submit new minutes version');
         }
         self::grid_table(array('Minutes ID','Meeting','Revision','Status'),array_map(function($m){return array($m->id,$m->meeting_id,$m->revision,$m->status);},(array)$minutes));
+        foreach ((array)$minutes as $item) {
+            echo '<details class="ino-ops-details"><summary>Review minutes #'.esc_html($item->id).' · meeting #'.esc_html($item->meeting_id).' · revision '.esc_html($item->revision).'</summary><p><strong>Source:</strong> '.esc_html($item->source_ref).'</p><div class="ino-ops-record-text">'.nl2br(esc_html($item->minutes_text)).'</div></details>';
+        }
         if (current_user_can('ino_governance_review')) {
             self::form_start('review_minutes');
             echo '<label>Submitted minutes by another author<select name="minutes_id" required>';
@@ -147,6 +152,14 @@ class INO_Governance_Operations_UI {
             self::form_end('Save resolution draft');
         }
         self::grid_table(array('Resolution','Meeting','Status','Recorded outcome'),array_map(function($r){return array($r->ref_code.' · '.$r->title,$r->meeting_id?:'Not linked',$r->status,$r->outcome?:'—');},(array)$resolutions));
+        foreach ((array)$resolutions as $item) {
+            echo '<details class="ino-ops-details"><summary>Review motion '.esc_html($item->ref_code).' · '.esc_html($item->status).'</summary><p><strong>Authority:</strong> '.esc_html($item->authority_ref).'</p><div class="ino-ops-record-text">'.nl2br(esc_html($item->motion_text)).'</div>';
+            if ($item->status==='outcome_recorded') {
+                echo '<p><strong>Reported outcome:</strong> '.esc_html($item->outcome).' · for '.esc_html($item->votes_for).' / against '.esc_html($item->votes_against).' / abstain '.esc_html($item->abstentions).'</p>';
+                echo '<p><strong>Quorum assessment:</strong> '.esc_html($item->quorum_evidence).'</p><p><strong>Evidence reference:</strong> '.esc_html($item->decision_evidence).'</p>';
+            }
+            echo '</details>';
+        }
         if (current_user_can('ino_governance_review')) {
             self::form_start('review_resolution');
             echo '<label>Draft motion by another author<select name="resolution_id" required>';
@@ -198,6 +211,10 @@ class INO_Governance_Operations_UI {
             }
             echo '</article>';
         }
+        echo '</section><section class="ino-panel"><h2>Recent Operational Audit</h2><p class="ino-panel-help">Restricted event history with the acting account and evidence notes.</p>';
+        self::grid_table(array('When','Type','ID','Event','Actor','Evidence'),array_map(function($event) {
+            return array($event->created_at,$event->entity_type,$event->entity_id,str_replace('_',' ',$event->event_key),$event->actor_id,$event->detail);
+        },(array)$events));
         echo '</section><p class="ino-note">Governance authority, quorum thresholds, records-retention standards and current appointments must be verified from executed INO instruments. Technical access alone does not grant constitutional decision-making authority.</p></main>';
     }
     private static function grid_table($headers,$data) {
