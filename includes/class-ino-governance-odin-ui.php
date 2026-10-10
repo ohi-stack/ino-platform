@@ -155,7 +155,7 @@ class INO_Governance_ODIN_UI {
         $out.='<h2>'.esc_html($item->title).'</h2><p>'.esc_html($item->summary).'</p>';
         $out.='<dl class="ino-odin-meta"><div><dt>Version</dt><dd>'.esc_html($item->version_no).'</dd></div><div><dt>Recorded publication</dt><dd>'.esc_html($item->published_at).'</dd></div><div><dt>Source</dt><dd>'.esc_html($item->source_title).'</dd></div></dl>';
         if ($full) {
-            $out.='<p><strong>Documentary reference:</strong> '.esc_html($item->source_ref).'</p>';
+            $out.='<p><strong>Published source registry code:</strong> '.esc_html($item->public_source_code).'</p>';
             if ($item->public_pdf_id && $item->source_sha256) {
                 $url=wp_get_attachment_url((int)$item->public_pdf_id);
                 if ($url) {
