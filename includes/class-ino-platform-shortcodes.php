@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) { exit; }
 class INO_Platform_Shortcodes {
     public static function init() {
         $map = array(
-            'ino_portal'=>'portal','ino_about'=>'about','ino_membership'=>'membership','ino_citizenship'=>'citizenship',
+            'ino_portal'=>'portal','ino_about'=>'about','ino_membership'=>'membership','ino_citizenship'=>'citizenship','ino_member_dashboard'=>'member_dashboard',
             'ino_member_directory'=>'member_directory','ino_member_profile'=>'member_profile','ino_people_network'=>'people_network','ino_family_tree'=>'family_tree',
             'ino_identity_intro'=>'identity_intro','ino_identity_declaration'=>'identity_declaration','ino_identity_dashboard'=>'identity_dashboard',
             'ino_book_of_names'=>'book_of_names','ino_family_archives'=>'family_archives','ino_certificates'=>'certificates','ino_verify_identity'=>'verify_identity',
@@ -148,6 +148,12 @@ class INO_Platform_Shortcodes {
             $wpdb->insert($wpdb->prefix.'ino_identity_declarations',array('user_id'=>get_current_user_id(),'ancestral_people'=>sanitize_text_field(wp_unslash($_POST['ancestral_people']??'')),'tribe_nation_clan'=>sanitize_text_field(wp_unslash($_POST['tribe_nation_clan']??'')),'family_lineage'=>sanitize_text_field(wp_unslash($_POST['family_lineage']??'')),'homeland'=>sanitize_text_field(wp_unslash($_POST['homeland']??'')),'language_tradition'=>sanitize_text_field(wp_unslash($_POST['language_tradition']??'')),'family_narrative'=>sanitize_textarea_field(wp_unslash($_POST['family_narrative']??'')),'preferred_wording'=>sanitize_textarea_field(wp_unslash($_POST['preferred_wording']??'')),'verification_status'=>'Self-declared','privacy_level'=>sanitize_text_field(wp_unslash($_POST['privacy_level']??'private'))));
         }
         return '<section class="ino-shell"><div class="ino-heading"><span>Identity & Heritage</span><h1>Identity Declaration</h1></div><form method="post" class="ino-form">'.wp_nonce_field('ino_identity_submit','_ino_identity_nonce',true,false).'<input type="hidden" name="ino_identity_submit" value="1"><label>Original or ancestral people<input name="ancestral_people"></label><label>Tribe, nation, clan, or community<input name="tribe_nation_clan"></label><label>Family or lineage name<input name="family_lineage"></label><label>Homeland or country of origin<input name="homeland"></label><label>Language or cultural tradition<input name="language_tradition"></label><label>Family narrative<textarea name="family_narrative" rows="5"></textarea></label><label>Preferred identity wording<textarea name="preferred_wording" rows="3"></textarea></label><p>Initial evidence classification: Self-declared. Independent review is a separate process.</p><label>Privacy<select name="privacy_level"><option value="private">Private</option><option value="members">Members only</option><option value="public_summary">Public summary</option></select></label><button class="ino-btn ino-btn-gold">Submit Declaration</button></form><div class="ino-notice">This record does not independently establish enrollment or recognition by an external government, agency, genealogical authority, or tribal nation.</div></section>';
+    }
+
+    public static function member_dashboard() {
+        // One existing authenticated, account-scoped record source; no second
+        // membership status, approval authority or private query is created.
+        return self::identity_dashboard();
     }
 
     public static function identity_dashboard() {
