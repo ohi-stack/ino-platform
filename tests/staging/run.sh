@@ -89,7 +89,7 @@ ok "recipient marks own notice read" viewer read_notice '{"notice_id":1}'
 dbtest notice_read
 dbtest privacy
 dbtest audit
-PREFIX="$(wp db prefix --path="$WP_ROOT" --quiet)"
+PREFIX="$(wp db prefix --path="$WP_ROOT")"
 wp db query "RENAME TABLE ${PREFIX}ino_gov_ops_events TO ${PREFIX}ino_gov_ops_events_offline" --path="$WP_ROOT" --quiet
 deny "audit table outage forces rollback" records create_meeting '{"title":"Must roll back","meeting_at":"2026-10-01T10:00","source_ref":"ROLLBACK-TEST"}'
 wp db query "RENAME TABLE ${PREFIX}ino_gov_ops_events_offline TO ${PREFIX}ino_gov_ops_events" --path="$WP_ROOT" --quiet
