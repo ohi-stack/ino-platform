@@ -29,6 +29,8 @@ class INO_Platform_Activator {
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         $cc = $wpdb->get_charset_collate();
         $p = $wpdb->prefix;
+        // WordPress dbDelta requires one field or index definition per line.
+        // Compact multi-column SQL produces false ALTER statements on upgrades.
         $tables = array(
             "CREATE TABLE {$p}ino_members (
                 id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -45,7 +47,9 @@ class INO_Platform_Activator {
                 public_consent TINYINT(1) DEFAULT 0,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                PRIMARY KEY (id), UNIQUE KEY member_id (member_id), KEY user_id (user_id)
+                PRIMARY KEY  (id),
+                UNIQUE KEY member_id (member_id),
+                KEY user_id (user_id)
             ) $cc;",
             "CREATE TABLE {$p}ino_connections (
                 id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -55,7 +59,9 @@ class INO_Platform_Activator {
                 status VARCHAR(30) DEFAULT 'pending',
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                PRIMARY KEY (id), UNIQUE KEY connection_pair (requester_id,recipient_id,connection_type), KEY recipient_status (recipient_id,status)
+                PRIMARY KEY  (id),
+                UNIQUE KEY connection_pair (requester_id,recipient_id,connection_type),
+                KEY recipient_status (recipient_id,status)
             ) $cc;",
             "CREATE TABLE {$p}ino_family_relationships (
                 id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -70,7 +76,10 @@ class INO_Platform_Activator {
                 status VARCHAR(30) DEFAULT 'pending',
                 created_by BIGINT UNSIGNED NULL,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                PRIMARY KEY (id), KEY person_a (person_a), KEY person_b (person_b), KEY status (status)
+                PRIMARY KEY  (id),
+                KEY person_a (person_a),
+                KEY person_b (person_b),
+                KEY status (status)
             ) $cc;",
             "CREATE TABLE {$p}ino_identity_declarations (
                 id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -91,23 +100,46 @@ class INO_Platform_Activator {
                 reviewed_at DATETIME NULL,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                PRIMARY KEY (id), KEY user_id (user_id), KEY review_status (review_status)
+                PRIMARY KEY  (id),
+                KEY user_id (user_id),
+                KEY review_status (review_status)
             ) $cc;",
             "CREATE TABLE {$p}ino_grants (
                 id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
                 tracking_id VARCHAR(50) NOT NULL,
-                funding_source VARCHAR(190) DEFAULT '', program_name VARCHAR(190) DEFAULT '', funding_type VARCHAR(100) DEFAULT '',
-                amount_available VARCHAR(100) DEFAULT '', deadline DATE NULL, status VARCHAR(60) DEFAULT 'Identified', assigned_to VARCHAR(190) DEFAULT '', notes TEXT NULL,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (id), UNIQUE KEY tracking_id (tracking_id)
+                funding_source VARCHAR(190) DEFAULT '',
+                program_name VARCHAR(190) DEFAULT '',
+                funding_type VARCHAR(100) DEFAULT '',
+                amount_available VARCHAR(100) DEFAULT '',
+                deadline DATE NULL,
+                status VARCHAR(60) DEFAULT 'Identified',
+                assigned_to VARCHAR(190) DEFAULT '',
+                notes TEXT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY  (id),
+                UNIQUE KEY tracking_id (tracking_id)
             ) $cc;",
             "CREATE TABLE {$p}ino_housing_projects (
-                id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT, project_code VARCHAR(50) NOT NULL, title VARCHAR(190) NOT NULL, location VARCHAR(190) DEFAULT '',
-                status VARCHAR(80) DEFAULT 'Planning', funding_status VARCHAR(80) DEFAULT 'Not Funded', notes TEXT NULL, created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                PRIMARY KEY (id), UNIQUE KEY project_code (project_code)
+                id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                project_code VARCHAR(50) NOT NULL,
+                title VARCHAR(190) NOT NULL,
+                location VARCHAR(190) DEFAULT '',
+                status VARCHAR(80) DEFAULT 'Planning',
+                funding_status VARCHAR(80) DEFAULT 'Not Funded',
+                notes TEXT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY  (id),
+                UNIQUE KEY project_code (project_code)
             ) $cc;",
             "CREATE TABLE {$p}ino_documents (
-                id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT, document_title VARCHAR(190) NOT NULL, document_category VARCHAR(100) DEFAULT 'General', document_url TEXT NULL,
-                version VARCHAR(40) DEFAULT '1.0', status VARCHAR(50) DEFAULT 'Filed', created_at DATETIME DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (id)
+                id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                document_title VARCHAR(190) NOT NULL,
+                document_category VARCHAR(100) DEFAULT 'General',
+                document_url TEXT NULL,
+                version VARCHAR(40) DEFAULT '1.0',
+                status VARCHAR(50) DEFAULT 'Filed',
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY  (id)
             ) $cc;"
         );
         foreach ($tables as $sql) { dbDelta($sql); }
