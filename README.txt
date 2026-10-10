@@ -1,10 +1,13 @@
-INO Platform Plugin — 1.5.1-rc.1
+INO Platform Plugin — 1.5.2-rc.1
 Requires: WordPress 6.5+, PHP 7.4+, transactional InnoDB-capable MySQL/MariaDB.
 
 INSTALLABLE SINGLE WORDPRESS PLUGIN PACKAGE.
 STATUS: Production-target candidate; actual hosted WordPress staging acceptance NOT established.
 
 Included:
+- Operational BuddyPress admin panel: diagnostics, real component checks, settings, alignment lookup, audit history.
+- Permission and nonce protected bridge settings; consent-gated friend requests.
+- No automatic public xProfile fields from private INO identity data.
 - Updated INO Command Center UI, navy/gold branding, public portal and member dashboard.
 - Privacy-gated member directory, authenticated self-record display and approved relationships.
 - Constitution registry and internal governance authority structure.
