@@ -111,11 +111,14 @@ final class INO_Platform_BuddyPress {
         if (!$user_id || !get_userdata($user_id)) { return false; }
         global $wpdb;
         $table = $wpdb->prefix . 'ino_members';
-        $approved = $wpdb->get_var($wpdb->prepare(
-            "SELECT id FROM {$table} WHERE user_id=%d AND public_consent=1 AND LOWER(status)='approved' LIMIT 1",
+        // An older consented/approved edition cannot override a newer
+        // withdrawal, pending status, denial or opt-out record.
+        $latest = $wpdb->get_row($wpdb->prepare(
+            "SELECT status,public_consent FROM {$table} WHERE user_id=%d ORDER BY id DESC LIMIT 1",
             $user_id
         ));
-        return (bool)$approved;
+        return $latest && strtolower((string)$latest->status)==='approved' &&
+            (int)$latest->public_consent===1;
     }
 
     public static function profile_link($user_id) {
@@ -131,8 +134,11 @@ final class INO_Platform_BuddyPress {
     private static function count_members($public=false) {
         global $wpdb;
         $table=$wpdb->prefix.'ino_members';
-        $sql="SELECT COUNT(DISTINCT user_id) FROM {$table} WHERE user_id IS NOT NULL AND LOWER(status)='approved'";
-        if ($public) { $sql.=" AND public_consent=1"; }
+        $sql="SELECT COUNT(*) FROM {$table} m INNER JOIN
+            (SELECT user_id,MAX(id) AS latest_id FROM {$table}
+             WHERE user_id IS NOT NULL GROUP BY user_id) newest
+            ON newest.latest_id=m.id WHERE LOWER(m.status)='approved'";
+        if ($public) { $sql.=" AND m.public_consent=1"; }
         return (int)$wpdb->get_var($sql);
     }
 
