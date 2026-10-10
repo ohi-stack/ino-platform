@@ -9,7 +9,8 @@ class INO_Platform_Social {
         add_action('personal_options_update', array(__CLASS__, 'save_profile_fields'));
         add_action('edit_user_profile_update', array(__CLASS__, 'save_profile_fields'));
         add_action('bp_setup_nav', array(__CLASS__, 'bp_nav'));
-        add_action('bp_init', array(__CLASS__, 'bp_profile_group'));
+        // Do not auto-create public xProfile fields from sensitive INO identity data.
+        // Profile-tab registration is handled by the per-owner authorization gate.
     }
 
     public static function buddyPress_active() {
@@ -23,10 +24,17 @@ class INO_Platform_Social {
         $uid = get_current_user_id();
         $action = sanitize_key($_POST['ino_social_action']);
         $target = isset($_POST['target_user']) ? absint($_POST['target_user']) : 0;
-        if (!$target || $target === $uid) { return; }
+        if (!$target || $target === $uid || !get_userdata($target)) { return; }
 
         if ($action === 'connect') {
-            if (self::buddyPress_active() && function_exists('friends_add_friend')) {
+            // Do not route connection requests to users without approved public
+            // INO directory consent; the social profile could otherwise expose
+            // a member who intentionally declined directory participation.
+            if (!INO_Platform_BuddyPress::enabled('friend_requests') ||
+                !INO_Platform_BuddyPress::can_connect_target($target)) {
+                return;
+            }
+            if (INO_Platform_BuddyPress::component('friends') && function_exists('friends_add_friend')) {
                 friends_add_friend($uid, $target);
             } else {
                 $wpdb->query($wpdb->prepare("INSERT IGNORE INTO {$wpdb->prefix}ino_connections (requester_id,recipient_id,connection_type,status) VALUES (%d,%d,%s,%s)", $uid, $target, 'community', 'pending'));
@@ -81,37 +89,55 @@ class INO_Platform_Social {
     }
 
     public static function bp_nav() {
-        if (!self::buddyPress_active() || !function_exists('bp_core_new_nav_item')) { return; }
+        if (!INO_Platform_BuddyPress::enabled('profile_tab') ||
+            !INO_Platform_BuddyPress::active() ||
+            !function_exists('bp_core_new_nav_item') ||
+            !function_exists('bp_displayed_user_id')) { return; }
+        $displayed=(int)bp_displayed_user_id();
+        if (!$displayed || !is_user_logged_in() ||
+            (get_current_user_id() !== $displayed && !current_user_can('manage_options'))) {
+            return;
+        }
         bp_core_new_nav_item(array(
             'name'=>'Family & Connections','slug'=>'ino-family-connections','screen_function'=>array(__CLASS__,'bp_screen'),'position'=>65,'default_subnav_slug'=>'ino-family-connections','show_for_displayed_user'=>true
         ));
     }
 
     public static function bp_screen() {
+        if (!is_user_logged_in() || !function_exists('bp_displayed_user_id') ||
+            (get_current_user_id() !== (int)bp_displayed_user_id() && !current_user_can('manage_options'))) {
+            wp_die(esc_html__('Private family records require member or administrative authorization.', 'ino-platform'),'',array('response'=>403));
+        }
         add_action('bp_template_content', array(__CLASS__, 'bp_screen_content'));
         bp_core_load_template(apply_filters('bp_core_template_plugin','members/single/plugins'));
     }
 
     public static function bp_screen_content() {
-        echo do_shortcode('[ino_family_tree user_id="'.absint(bp_displayed_user_id()).'"]');
+        if (!INO_Platform_BuddyPress::enabled('profile_tab') ||
+            !is_user_logged_in() || !function_exists('bp_displayed_user_id')) { return; }
+        $id=(int)bp_displayed_user_id();
+        if ($id && ($id===get_current_user_id() || current_user_can('manage_options'))) {
+            echo do_shortcode('[ino_family_tree user_id="'.absint($id).'"]');
+        }
     }
 
     public static function bp_profile_group() {
-        if (!self::buddyPress_active() || !function_exists('xprofile_insert_field')) { return; }
-        if (get_option('ino_bp_fields_created')) { return; }
-        $group_id = xprofile_insert_field(array('field_group_id'=>1,'name'=>'INO Identity & Heritage','description'=>'INO identity, heritage, and membership profile information','can_delete'=>false,'type'=>'option'));
-        update_option('ino_bp_fields_created', $group_id ? 1 : 0);
+        // Deprecated: the former automatic xProfile field insert used a wrong
+        // field type and risked exposing sensitive INO identity attributes.
+        // No public xProfile fields are created by this bridge.
     }
 
     public static function avatar($user_id, $size=160) {
-        if (self::buddyPress_active() && function_exists('bp_core_fetch_avatar')) {
+        if (INO_Platform_BuddyPress::enabled('prefer_bp_media') &&
+            INO_Platform_BuddyPress::active() && function_exists('bp_core_fetch_avatar')) {
             return bp_core_fetch_avatar(array('item_id'=>$user_id,'type'=>'full','width'=>$size,'height'=>$size,'html'=>true));
         }
         return get_avatar($user_id, $size, '', '', array('class'=>'ino-avatar'));
     }
 
     public static function cover($user_id) {
-        if (self::buddyPress_active() && function_exists('bp_attachments_get_attachment')) {
+        if (INO_Platform_BuddyPress::enabled('prefer_bp_media') &&
+            INO_Platform_BuddyPress::active() && function_exists('bp_attachments_get_attachment')) {
             $url = bp_attachments_get_attachment('url', array('item_id'=>$user_id,'object_dir'=>'members'));
             if ($url) { return $url; }
         }
