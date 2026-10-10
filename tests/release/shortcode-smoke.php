@@ -35,7 +35,7 @@ $outsider=get_user_by('email','ino-stage-outsider@example.invalid');
 ino_rc_check($member && $outsider,'synthetic account fixtures retained after plugin reinstall');
 wp_set_current_user(0);
 $guest=do_shortcode('[ino_member_dashboard]');
-ino_rc_check(strpos($guest,'Please log in')!==false,'anonymous dashboard renders sign-in boundary');
+ino_rc_check(strpos($guest,'Sign in to your workspace')!==false,'anonymous dashboard renders the redesigned sign-in boundary');
 wp_set_current_user((int)$member->ID);
 $member_view=do_shortcode('[ino_member_dashboard]');
 ino_rc_check(strpos($member_view,'Welcome to Your Membership Portal')!==false,'authenticated member dashboard renders');
