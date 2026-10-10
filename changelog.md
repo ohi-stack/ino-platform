@@ -1,3 +1,13 @@
+## 1.6.1-rc.1 — Membership Portal UI upgrade
+
+- Replaced membership admin placeholder with restricted data-backed Command Center.
+- Rebuilt private member dashboard with account-scoped status, widgets, trends, activity and actionable navigation.
+- Added no-JS source tables, animated SVG charts, responsive roster and reduced-motion fallback.
+- Replaced public membership shortcode placeholder with a branded landing view.
+- Fixed legacy directory/profile checks to honor the latest membership consent and status, not historical approved rows.
+- Added cross-account privacy, latest status revocation, admin filters and ZIP retention regression tests.
+- No new schema or unverified membership approval and credential workflows; hosted site acceptance remains required.
+
 ## 1.6.0-rc.1 — Nonbinding Voting & Consultation
 
 - New WordPress administration and frontend voting modules and three shortcodes.
