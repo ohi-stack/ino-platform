@@ -30,7 +30,8 @@ jobs:
           test -s assets/css/ino-public-platform.css
           test -s assets/js/ino-admin-command.js
           grep -Fq 'data-ino-series' includes/class-ino-platform-admin.php
-          grep -Fq 'public_consent = 1' includes/class-ino-platform-shortcodes.php
+          grep -Fq 'm.public_consent=1' includes/class-ino-platform-shortcodes.php
+          grep -Fq 'MAX(id) AS latest_id' includes/class-ino-platform-shortcodes.php
           grep -Fq "status='approved'" includes/class-ino-platform-shortcodes.php
           grep -Fq 'prefers-reduced-motion:reduce' assets/css/ino-admin-command.css
           grep -Fq 'prefers-reduced-motion:reduce' assets/css/ino-public-platform.css
@@ -106,8 +107,8 @@ jobs:
           grep -Fq "ino_platform_schema_version" includes/class-ino-platform-release.php
           grep -Fq "ino_member_dashboard" includes/class-ino-platform-shortcodes.php
           grep -Fq "ino-member-dashboard" includes/class-ino-platform-activator.php
-          grep -Fq "Version: 1.6.0-rc.1" ino-platform.php
-          grep -Fq "define('INO_PLATFORM_VERSION', '1.6.0-rc.1')" ino-platform.php
+          grep -Fq "Version: 1.6.1-rc.1" ino-platform.php
+          grep -Fq "define('INO_PLATFORM_VERSION', '1.6.1-rc.1')" ino-platform.php
 
       - name: Verify BuddyPress Bridge integration contracts
         run: |
@@ -137,4 +138,18 @@ jobs:
           grep -Fq 'ino_voting' includes/class-ino-platform-voting.php
           grep -Fq 'results_policy' includes/class-ino-platform-voting.php
           grep -Fq 'prefers-reduced-motion:reduce' assets/css/ino-voting.css
-          grep -Fq "Version: 1.6.0-rc.1" ino-platform.php
+          grep -Fq "Version: 1.6.1-rc.1" ino-platform.php
+
+      - name: Verify INO Membership Portal presentation and privacy contract
+        run: |
+          set -euo pipefail
+          test -s includes/class-ino-platform-membership-ui.php
+          test -s assets/css/ino-membership-ui.css
+          test -s assets/js/ino-membership-ui.js
+          test -s tests/integration/membership-ui-smoke.php
+          grep -Fq "INO_Platform_Membership_UI::admin_page()" includes/class-ino-platform-admin.php
+          grep -Fq "INO_Platform_Membership_UI::member_dashboard()" includes/class-ino-platform-shortcodes.php
+          grep -Fq 'WHERE user_id=%d' includes/class-ino-platform-membership-ui.php
+          grep -Fq 'View the source data table' includes/class-ino-platform-membership-ui.php
+          grep -Fq 'prefers-reduced-motion:reduce' assets/css/ino-membership-ui.css
+          grep -Fq "Version: 1.6.1-rc.1" ino-platform.php

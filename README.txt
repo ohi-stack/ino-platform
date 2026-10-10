@@ -1,10 +1,12 @@
-INO Platform Plugin — 1.6.0-rc.1
+INO Platform Plugin — 1.6.1-rc.1
 Requires: WordPress 6.5+, PHP 7.4+, transactional InnoDB-capable MySQL/MariaDB.
 
 INSTALLABLE SINGLE WORDPRESS PLUGIN PACKAGE.
 STATUS: Production-target candidate; actual hosted WordPress staging acceptance NOT established.
 
 Included:
+- Updated read-only Membership Portal UI on frontend/admin, responsive trends, widgets, activity, filtered records.
+- Privacy-safe dashboard restricted to current member, latest-consent directory/profile checks and no-cache pages.
 - Voting & Consultation: admin draft/open/close management, frontend ballots, results, private voter receipts.
 - Single/multiple choice, three configurable electorates, one vote per eligible WP account, transactional audit.
 - Nonbinding only: NO automatic resolution adoption, anonymous ballots or externally verified elections.

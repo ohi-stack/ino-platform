@@ -54,7 +54,7 @@ class INO_Platform_Shortcodes {
         return $html;
     }
     public static function about() { return self::simple('About the INO Platform','<p>The INO Platform is the central WordPress-based administration and service-delivery system for the Indigenous Nation of Onegodia. It connects public pages, secure member dashboards, and administrative control panels.</p>'); }
-    public static function membership() { return self::simple('INO Membership','<p>Membership tools support applications, member numbers, classifications, status histories, profile records, and access to INO programs.</p>'); }
+    public static function membership() { return INO_Platform_Membership_UI::landing(); }
     public static function citizenship() { return self::simple('INO Citizenship','<p>This portal records voluntary INO enrollment and institutional membership classifications. It does not independently alter government-recognized civil citizenship or immigration status.</p>'); }
     public static function treasury_grants() { return self::simple('Treasury & Grants','<p>Track grant opportunities, funding pipelines, deadlines, proposals, awards, compliance, and closeout records.</p>'); }
     public static function housing() { return self::simple('Housing Development','<p>Track properties, readiness tasks, partners, funding sources, project milestones, construction phases, and occupancy status.</p>'); }
@@ -71,7 +71,11 @@ class INO_Platform_Shortcodes {
 
     public static function member_directory() {
         global $wpdb;
-        $ids = $wpdb->get_col("SELECT DISTINCT user_id FROM {$wpdb->prefix}ino_members WHERE user_id IS NOT NULL AND public_consent = 1 AND LOWER(status) = 'approved' LIMIT 60");
+        $ids = $wpdb->get_col("SELECT m.user_id FROM {$wpdb->prefix}ino_members m
+            INNER JOIN (SELECT user_id,MAX(id) AS latest_id FROM {$wpdb->prefix}ino_members
+                        WHERE user_id IS NOT NULL GROUP BY user_id) latest
+                        ON latest.latest_id=m.id
+            WHERE m.public_consent=1 AND LOWER(m.status)='approved' ORDER BY m.id DESC LIMIT 60");
         if (!$ids) {
             return self::simple('Member Directory', '<p>No member profiles have been approved for public listing.</p>');
         }
@@ -92,10 +96,13 @@ class INO_Platform_Shortcodes {
         if (!$user) { return '<div class="ino-notice">Member not found.</div>'; }
         $is_self = is_user_logged_in() && get_current_user_id() === $user_id;
         $is_staff = current_user_can('manage_options');
-        $public_consent = (bool) $wpdb->get_var($wpdb->prepare(
-            "SELECT 1 FROM {$wpdb->prefix}ino_members WHERE user_id = %d AND public_consent = 1 AND LOWER(status) = 'approved' LIMIT 1",
+        $latest_membership = $wpdb->get_row($wpdb->prepare(
+            "SELECT status,public_consent FROM {$wpdb->prefix}ino_members WHERE user_id=%d ORDER BY id DESC LIMIT 1",
             $user_id
         ));
+        $public_consent = $latest_membership &&
+            strtolower((string)$latest_membership->status)==='approved' &&
+            (int)$latest_membership->public_consent===1;
         if (!$is_self && !$is_staff && !$public_consent) {
             return '<div class="ino-notice">This member profile is private or unavailable.</div>';
         }
@@ -151,9 +158,7 @@ class INO_Platform_Shortcodes {
     }
 
     public static function member_dashboard() {
-        // One existing authenticated, account-scoped record source; no second
-        // membership status, approval authority or private query is created.
-        return self::identity_dashboard();
+        return INO_Platform_Membership_UI::member_dashboard();
     }
 
     public static function identity_dashboard() {
