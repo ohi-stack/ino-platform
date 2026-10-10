@@ -2,14 +2,14 @@
 /**
  * Plugin Name: INO Platform Plugin
  * Description: Integrated administration, membership, identity, heritage, genealogy, social connections, grants, housing, documents, governance, and public portal tools for the Indigenous Nation of Onegodia.
- * Version: 1.4.0-rc.1
+ * Version: 1.5.0-rc.1
  * Author: OneGodian
  * Text Domain: ino-platform
  */
 
 if (!defined('ABSPATH')) { exit; }
 
-define('INO_PLATFORM_VERSION', '1.4.0-rc.1');
+define('INO_PLATFORM_VERSION', '1.5.0-rc.1');
 define('INO_PLATFORM_PATH', plugin_dir_path(__FILE__));
 define('INO_PLATFORM_URL', plugin_dir_url(__FILE__));
 
@@ -20,6 +20,8 @@ require_once INO_PLATFORM_PATH . 'includes/class-ino-platform-social.php';
 require_once INO_PLATFORM_PATH . 'includes/class-ino-platform-governance.php';
 require_once INO_PLATFORM_PATH . 'includes/class-ino-governance-operations.php';
 require_once INO_PLATFORM_PATH . 'includes/class-ino-governance-operations-ui.php';
+require_once INO_PLATFORM_PATH . 'includes/class-ino-governance-odin.php';
+require_once INO_PLATFORM_PATH . 'includes/class-ino-governance-odin-ui.php';
 
 register_activation_hook(__FILE__, array('INO_Platform_Activator', 'activate'));
 
@@ -31,6 +33,8 @@ add_action('plugins_loaded', function () {
     INO_Platform_Governance::init();
     INO_Governance_Operations::install();
     INO_Governance_Operations::init();
+    INO_Governance_ODIN::install();
+    INO_Governance_ODIN::init();
     INO_Platform_Admin::init();
     INO_Platform_Shortcodes::init();
     INO_Platform_Social::init();
