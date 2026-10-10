@@ -371,7 +371,8 @@ class INO_Governance_ODIN {
         $where=$odin_id ? $wpdb->prepare(' AND r.odin_id=%s',$odin_id) : '';
         $sql="SELECT r.odin_id,v.version_no,v.id AS version_id,v.title,v.summary,v.source_ref,
                   v.source_item_id,v.source_sha256,v.status,v.published_at,
-                  g.title AS source_title,g.attachment_id AS public_pdf_id,g.document_hash AS current_sha256
+                  g.title AS source_title,g.record_code AS public_source_code,
+                  g.attachment_id AS public_pdf_id,g.document_hash AS current_sha256
               FROM {$r} r JOIN {$v} v ON v.record_id=r.id
               JOIN {$g} g ON g.id=v.source_item_id
               WHERE v.status IN ({$statuses}) AND g.status='published'
