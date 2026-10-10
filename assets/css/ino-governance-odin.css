@@ -1,0 +1,50 @@
+/* INO ODIN & Transparency — scoped, responsive and reduced-motion aware. */
+.ino-odin-admin,.ino-odin-public{--odin-ink:#071B2D;--odin-navy:#0D2B45;--odin-gold:#C99A2E;--odin-red:#A5070A;--odin-cream:#F3E7BD;--odin-muted:#526d7d;--odin-stroke:#dce5e9}
+.ino-odin-admin .ino-hero,.ino-odin-public .ino-hero-public{background:radial-gradient(circle at 79% 14%,rgba(226,197,111,.24),transparent 32%),linear-gradient(120deg,#071B2D,#0D2B45 67%,#173a54)}
+.ino-odin-admin .ino-panel{margin-top:19px}
+.ino-odin-admin .ino-panel h2{margin-bottom:8px}
+.ino-odin-admin .ino-odin-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 21px;border-top:1px solid #e5ecef;padding-top:17px;margin-top:15px}
+.ino-odin-admin .ino-odin-form label{display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:750;color:var(--odin-navy)}
+.ino-odin-admin .ino-odin-form input:not([type=checkbox]),.ino-odin-admin .ino-odin-form select,.ino-odin-admin .ino-odin-form textarea{width:100%;max-width:100%;min-height:43px;padding:10px 12px;border:1px solid #bed0dc;border-radius:10px;background:#fff;color:#071B2D}
+.ino-odin-admin .ino-odin-form textarea{min-height:95px}
+.ino-odin-admin .ino-odin-form .ino-odin-wide{grid-column:1/-1}
+.ino-odin-admin .ino-odin-form .ino-odin-check{display:flex;flex-direction:row;align-items:flex-start;gap:9px;line-height:1.6;background:#faf4df;border-radius:10px;padding:12px 14px}
+.ino-odin-admin .ino-odin-form .ino-odin-check input{flex:none;margin-top:4px}
+.ino-odin-admin .ino-odin-form button{justify-self:start}
+.ino-odin-admin .ino-odin-flow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:22px}
+.ino-odin-admin .ino-odin-flow div{background:#eef3f5;border:1px solid var(--odin-stroke);border-radius:11px;padding:16px 12px;text-align:center;font-size:12px;color:#102B45;font-weight:750;line-height:1.5;position:relative}
+.ino-odin-admin .ino-odin-flow div:last-child{background:#FAF4DF;border-color:#e0c986}
+.ino-odin-admin .ino-odin-table{max-width:100%;overflow:auto;border-radius:11px;border:1px solid var(--odin-stroke);margin-top:16px}
+.ino-odin-admin .ino-odin-table table{min-width:750px}
+.ino-odin-admin .ino-odin-table td{vertical-align:top;max-width:300px;overflow-wrap:anywhere}
+.ino-odin-admin code,.ino-odin-public code{font-size:11px;overflow-wrap:anywhere}
+.ino-odin-public .ino-odin-public-links{display:flex;flex-wrap:wrap;gap:9px;margin:20px 0 28px}
+.ino-odin-public .ino-odin-public-links a{display:inline-flex;border-radius:999px;color:#0D2B45;background:#fff;border:1px solid #dce5e9;padding:10px 14px;text-decoration:none;font-weight:800;transition:border-color .2s,transform .2s}
+.ino-odin-public .ino-odin-public-links a:hover{border-color:var(--odin-gold);transform:translateY(-2px)}
+.ino-odin-public .ino-odin-item{background:#fff;border:1px solid var(--odin-stroke);border-radius:17px;padding:24px;margin-top:20px;box-shadow:0 9px 32px rgba(7,27,45,.06);transition:transform .2s,border-color .2s}
+.ino-odin-public .ino-odin-item:hover{border-color:#C99A2E;transform:translateY(-2px)}
+.ino-odin-public .ino-odin-item-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.ino-odin-public .ino-odin-ref{font-weight:800;font-size:11px;letter-spacing:.025em;color:#617787;overflow-wrap:anywhere}
+.ino-odin-public .ino-odin-status{font-size:11px;text-transform:uppercase;letter-spacing:.07em;background:#e6f0e8;color:#236346;border-radius:999px;font-weight:800;padding:6px 12px}
+.ino-odin-public .ino-odin-item h2{color:#071B2D;font-size:clamp(20px,2.8vw,26px);margin:15px 0 6px}
+.ino-odin-public .ino-odin-item p{color:#526d7d;line-height:1.7}
+.ino-odin-public .ino-odin-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;border-top:1px solid #e7ebef;margin-top:19px;padding-top:17px}
+.ino-odin-public .ino-odin-meta div{min-width:0}
+.ino-odin-public .ino-odin-meta dt{font-size:11px;text-transform:uppercase;color:#6b8190;letter-spacing:.08em;margin-bottom:6px}
+.ino-odin-public .ino-odin-meta dd{margin:0;color:#102B45;font-size:13px;font-weight:700;overflow-wrap:anywhere}
+.ino-odin-public .ino-odin-view{text-align:right}
+.ino-odin-public .ino-odin-view a,.ino-odin-public .ino-odin-item a{color:#0D2B45;font-weight:850;text-underline-offset:4px}
+.ino-odin-public .ino-odin-verify{background:#fff;border:1px solid #dce5e9;border-radius:17px;padding:20px;margin:22px 0}
+.ino-odin-public .ino-odin-verify label{color:#0D2B45;font-weight:750}
+.ino-odin-public .ino-odin-verify>div{display:flex;gap:10px;margin-top:10px;align-items:stretch}
+.ino-odin-public .ino-odin-verify input{min-width:0;flex:1;border:1px solid #bdccd8;border-radius:10px;padding:13px;color:#0D2B45}
+.ino-odin-public .ino-odin-verify button{border:0;border-radius:10px;background:#C99A2E;color:#071B2D;padding:10px 16px;font-weight:800;cursor:pointer}
+.ino-odin-public .ino-odin-match{padding:14px 18px;background:#e8f4e9;color:#205f3b;border-radius:11px;font-weight:750}
+.ino-odin-public .ino-odin-timeline{padding-left:28px;border-left:2px solid #d9c07b;list-style:none}
+.ino-odin-public .ino-odin-timeline li{position:relative;margin-bottom:24px}
+.ino-odin-public .ino-odin-timeline li:before{content:"";position:absolute;left:-36px;top:6px;width:14px;height:14px;border:3px solid #FAF4DF;background:#C99A2E;border-radius:50%}
+.ino-odin-public .ino-odin-timeline .ino-odin-time{display:block;color:#0D2B45;font-weight:800;font-size:12px}
+.ino-odin-public a:focus-visible,.ino-odin-public button:focus-visible,.ino-odin-public input:focus-visible,.ino-odin-admin input:focus-visible,.ino-odin-admin select:focus-visible,.ino-odin-admin textarea:focus-visible{outline:3px solid #A5070A;outline-offset:2px}
+@media(max-width:960px){.ino-odin-admin .ino-odin-flow{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:650px){.ino-odin-admin .ino-odin-flow{grid-template-columns:repeat(2,minmax(0,1fr))}.ino-odin-admin .ino-odin-form{grid-template-columns:1fr}.ino-odin-admin .ino-odin-form .ino-odin-wide{grid-column:auto}.ino-odin-public .ino-odin-meta{grid-template-columns:1fr}.ino-odin-public .ino-odin-verify>div{flex-direction:column}.ino-odin-public .ino-odin-item{padding:17px}}
+@media(prefers-reduced-motion:reduce){.ino-odin-admin *, .ino-odin-public *, .ino-odin-admin *:before, .ino-odin-public *:before{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
