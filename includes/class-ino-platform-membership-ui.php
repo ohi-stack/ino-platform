@@ -80,7 +80,7 @@ final class INO_Platform_Membership_UI {
         if (!isset($allowed[$table]) || $allowed[$table]!==$field) { return array_fill(0,6,0); }
         $months=self::months();
         $t=$wpdb->prefix.$table;
-        $sql="SELECT DATE_FORMAT({$field},'%Y-%m') AS period,COUNT(*) AS total FROM {$t}
+        $sql="SELECT DATE_FORMAT({$field},'%%Y-%%m') AS period,COUNT(*) AS total FROM {$t}
             WHERE {$field} >= %s";
         $args=array($months[0].'-01 00:00:00');
         if ($uid) {
@@ -90,7 +90,7 @@ final class INO_Platform_Membership_UI {
             $sql.=" AND {$column}=%d";
             $args[]=$uid;
         }
-        $sql.=" GROUP BY DATE_FORMAT({$field},'%Y-%m')";
+        $sql.=" GROUP BY DATE_FORMAT({$field},'%%Y-%%m')";
         $rows=$wpdb->get_results($wpdb->prepare($sql,$args));
         $lookup=array_fill_keys($months,0);
         foreach ((array)$rows as $r) {
