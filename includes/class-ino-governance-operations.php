@@ -156,11 +156,11 @@ class INO_Governance_Operations {
     private static function fail($message, $code=400) { wp_die(esc_html($message), '', array('response'=>$code)); }
     private static function text($key, $max=190) {
         $value = isset($_POST[$key]) ? sanitize_text_field(wp_unslash($_POST[$key])) : '';
-        return mb_substr($value, 0, $max);
+        return function_exists('mb_substr') ? mb_substr($value, 0, $max) : substr($value, 0, $max);
     }
     private static function paragraph($key, $max=30000) {
         $value = isset($_POST[$key]) ? sanitize_textarea_field(wp_unslash($_POST[$key])) : '';
-        return mb_substr($value,0,$max);
+        return function_exists('mb_substr') ? mb_substr($value,0,$max) : substr($value,0,$max);
     }
     private static function number($key) {
         return isset($_POST[$key]) ? absint($_POST[$key]) : 0;
