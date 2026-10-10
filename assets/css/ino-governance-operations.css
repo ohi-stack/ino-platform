@@ -1,0 +1,30 @@
+/* INO Governance Operations — phase 2, responsive WordPress admin only */
+.ino-ops{--ino-navy:#0D2B45;--ino-gold:#C99A2E;--ino-red:#A5070A;--ino-cream:#F3E7BD}
+.ino-ops .ino-hero{background:radial-gradient(circle at 75% 12%,rgba(226,197,111,.17),transparent 35%),linear-gradient(122deg,#071B2D,#0D2B45 70%,#183C53)}
+.ino-ops .ino-ops-jump{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 4px}
+.ino-ops .ino-ops-jump a{display:inline-flex;background:#fff;border:1px solid #dce5e9;color:#0D2B45;border-radius:999px;padding:10px 15px;font-weight:800;transition:transform .2s,border-color .2s}
+.ino-ops .ino-ops-jump a:hover{border-color:#C99A2E;transform:translateY(-2px)}
+.ino-ops .ino-panel{margin-top:22px;scroll-margin-top:60px}
+.ino-ops .ino-panel h2{font-size:24px;color:#071B2D}
+.ino-ops .ino-ops-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px 18px;padding:18px 0 23px;border-bottom:1px solid #dce5e9;margin-bottom:20px}
+.ino-ops .ino-ops-form label{display:flex;flex-direction:column;gap:7px;font-weight:700;color:#0D2B45}
+.ino-ops .ino-ops-form input:not([type=checkbox]),.ino-ops .ino-ops-form select,.ino-ops .ino-ops-form textarea{width:100%;min-height:42px;max-width:100%;padding:11px;border:1px solid #c4d1dc;border-radius:9px;background:#fff;color:#071B2D}
+.ino-ops .ino-ops-form input:focus-visible,.ino-ops .ino-ops-form textarea:focus-visible,.ino-ops .ino-ops-form select:focus-visible{outline:3px solid #C99A2E;outline-offset:2px}
+.ino-ops .ino-ops-form .ino-ops-wide{grid-column:1/-1}
+.ino-ops .ino-ops-form .ino-ops-check{display:flex;flex-direction:row;align-items:flex-start;line-height:1.55;background:#FAF4DF;border-radius:10px;padding:13px}
+.ino-ops .ino-ops-form .ino-ops-check input{margin:3px 9px 0 0;flex:none}
+.ino-ops .ino-ops-form button{justify-self:start;align-self:end}
+.ino-ops .ino-ops-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.ino-ops .ino-ops-actions .ino-ops-form{grid-template-columns:1fr;border:1px solid #dce5e9;background:#f7f9fa;border-radius:14px;padding:18px}
+.ino-ops .ino-ops-table{max-width:100%;overflow-x:auto;border:1px solid #e4eaef;border-radius:10px}
+.ino-ops .ino-ops-table .ino-table{min-width:660px;margin:0;background:#fff}
+.ino-ops .ino-ops-table .ino-table td{vertical-align:top;overflow-wrap:anywhere;max-width:260px}
+.ino-ops .ino-ops-table .ino-table th{background:#f4f7fa;color:#102B45;font-weight:800}
+.ino-ops .ino-ops-notice{padding:17px;border:1px solid #dce5e9;border-left:4px solid #C99A2E;border-radius:10px;margin-top:12px}
+.ino-ops .ino-ops-notice strong{color:#0D2B45}
+.ino-ops .ino-ops-notice p{color:#566e7b;line-height:1.6}
+.ino-ops .ino-ops-notice .ino-ops-form{display:block;padding:0;border:0;margin:12px 0 0}
+.ino-ops .ino-ops-notice .ino-ops-form .ino-btn{padding:8px 11px}
+@media(max-width:980px){.ino-ops .ino-ops-actions{grid-template-columns:1fr}}
+@media(max-width:680px){.ino-ops .ino-ops-form{grid-template-columns:1fr}.ino-ops .ino-ops-form .ino-ops-wide{grid-column:auto}}
+@media(prefers-reduced-motion:reduce){.ino-ops *,.ino-ops *::before,.ino-ops *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
