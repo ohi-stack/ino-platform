@@ -4,6 +4,7 @@ on:
     branches:
       - 'feat/ino-wp-staging-workflow-*'
       - 'release/ino-platform-*'
+      - 'feat/ino-buddypress-bridge-*'
   pull_request:
     branches:
       - 'feat/ino-odin-transparency-phase3-20261010'
@@ -64,6 +65,23 @@ jobs:
           wp plugin status ino-platform --path="$WP_ROOT"
       - name: Execute complete governance workflow, permission denials and audit rollback
         run: bash tests/staging/run.sh
+      - name: Install BuddyPress and verify live integration
+        run: |
+          set -euo pipefail
+          wp plugin install buddypress --activate --path="$WP_ROOT" --quiet
+          wp eval-file tests/integration/buddypress-smoke.php --path="$WP_ROOT"
+          if env INO_BP_ACTOR=ino_stage_outsider INO_BP_ACTION=save wp eval-file tests/integration/buddypress-dispatch.php --path="$WP_ROOT" --quiet; then
+            echo "::error::Unprivileged user modified BuddyPress settings"
+            exit 1
+          fi
+          if env INO_BP_ACTOR=admin_test INO_BP_ACTION=save INO_BP_NONCE=invalid wp eval-file tests/integration/buddypress-dispatch.php --path="$WP_ROOT" --quiet; then
+            echo "::error::Invalid nonce permitted BuddyPress settings"
+            exit 1
+          fi
+          env INO_BP_ACTOR=admin_test INO_BP_ACTION=save INO_BP_PROFILE_TAB=1 wp eval-file tests/integration/buddypress-dispatch.php --path="$WP_ROOT" --quiet
+          wp eval 'if (!INO_Platform_BuddyPress::enabled("profile_tab")) { WP_CLI::error("Settings not stored"); }' --path="$WP_ROOT"
+          env INO_BP_ACTOR=admin_test INO_BP_ACTION=check wp eval-file tests/integration/buddypress-dispatch.php --path="$WP_ROOT" --quiet
+          wp eval 'if (!get_option("ino_bp_bridge_report")) { WP_CLI::error("Diagnostic report missing"); } if (count((array)get_option("ino_bp_bridge_audit")) < 2) { WP_CLI::error("Bridge audit incomplete"); }' --path="$WP_ROOT"
       - name: Build single installable INO plugin ZIP
         if: success()
         run: |
@@ -73,34 +91,37 @@ jobs:
             tar -xf - -C dist/ino-platform
           test -s dist/ino-platform/ino-platform.php
           test -s dist/ino-platform/includes/class-ino-platform-release.php
+          test -s dist/ino-platform/includes/class-ino-platform-buddypress.php
+          test -s dist/ino-platform/assets/css/ino-buddypress-admin.css
           test -s dist/ino-platform/assets/css/ino-admin-command.css
           test -s dist/ino-platform/assets/css/ino-public-platform.css
           test -s dist/ino-platform/assets/css/ino-governance-odin.css
           test -s dist/ino-platform/assets/js/ino-admin-command.js
           find dist/ino-platform -type f -name '*.php' -print0 | xargs -0 -n1 php -l > dist/php-release-lint.txt
           cd dist
-          zip -q -r "INO-Platform-1.5.1-rc.1-PRODUCTION-CANDIDATE.zip" ino-platform
-          unzip -t "INO-Platform-1.5.1-rc.1-PRODUCTION-CANDIDATE.zip" | tail -1
-          sha256sum "INO-Platform-1.5.1-rc.1-PRODUCTION-CANDIDATE.zip" > plugin-SHA256.txt
+          zip -q -r "INO-Platform-1.5.2-rc.1-PRODUCTION-CANDIDATE.zip" ino-platform
+          unzip -t "INO-Platform-1.5.2-rc.1-PRODUCTION-CANDIDATE.zip" | tail -1
+          sha256sum "INO-Platform-1.5.2-rc.1-PRODUCTION-CANDIDATE.zip" > plugin-SHA256.txt
       - name: Reinstall the packaged ZIP and preserve existing governance records
         if: success()
         run: |
           set -euo pipefail
           wp plugin deactivate ino-platform --path="$WP_ROOT" --quiet
-          wp plugin install "dist/INO-Platform-1.5.1-rc.1-PRODUCTION-CANDIDATE.zip" --path="$WP_ROOT" --force --quiet
+          wp plugin install "dist/INO-Platform-1.5.2-rc.1-PRODUCTION-CANDIDATE.zip" --path="$WP_ROOT" --force --quiet
           wp plugin activate ino-platform --path="$WP_ROOT" --quiet
           wp plugin status ino-platform --path="$WP_ROOT"
           INO_ASSERT=audit wp eval-file tests/staging/assert.php --path="$WP_ROOT" --quiet
           INO_ASSERT=outcome wp eval-file tests/staging/assert.php --path="$WP_ROOT" --quiet
           INO_ASSERT=notice_read wp eval-file tests/staging/assert.php --path="$WP_ROOT" --quiet
           wp eval-file tests/release/shortcode-smoke.php --path="$WP_ROOT" --quiet
+          wp eval 'if (!INO_Platform_BuddyPress::active() || !INO_Platform_BuddyPress::enabled("profile_tab")) { WP_CLI::error("BuddyPress bridge settings lost on ZIP reinstall"); }' --path="$WP_ROOT"
       - name: Upload installable WordPress plugin
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: INO-Platform-1.5.1-rc.1-WordPress-Plugin
+          name: INO-Platform-1.5.2-rc.1-WordPress-Plugin
           path: |
-            dist/INO-Platform-1.5.1-rc.1-PRODUCTION-CANDIDATE.zip
+            dist/INO-Platform-1.5.2-rc.1-PRODUCTION-CANDIDATE.zip
             dist/plugin-SHA256.txt
             dist/php-release-lint.txt
           if-no-files-found: error
