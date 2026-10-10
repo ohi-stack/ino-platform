@@ -118,13 +118,15 @@ case 'privacy':
     ino_stage_assert(strpos($html,'Meeting Minutes')===false,'anonymous user cannot see meeting details');
     break;
 case 'audit':
+    ino_stage_assert(ino_stage_count('meetings')===1,'a failed audited insert must leave no orphan meeting');
+    ino_stage_assert(ino_stage_count('tasks')===1,'no orphan task after prior failures');
     $events=INO_Governance_Operations::table('events');
     $keys=$wpdb->get_col("SELECT event_key FROM {$events} ORDER BY id ASC");
     $expected=array(
         'meeting_drafted','agenda_added','meeting_scheduled','meeting_held',
         'minutes_submitted','minutes_reviewed','resolution_drafted','resolution_reviewed',
         'minutes_submitted','minutes_reviewed','motion_outcome_recorded',
-        'task_assigned','task_completed'
+        'task_assigned','task_completed','notification_read'
     );
     ino_stage_assert($keys===$expected,'full append-only event chain and no extra failed-action events; actual='.implode(',',$keys));
     $tasks=INO_Governance_Operations::table('tasks');
