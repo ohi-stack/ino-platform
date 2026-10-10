@@ -21,7 +21,7 @@ class INO_Platform_Admin {
             'ino-platform-governance'  => array('Governance', 'Policies, resolutions and organizational records'),
             'ino-platform-forms'       => array('Forms', 'Intake forms and submission processes'),
             'ino-platform-reports'     => array('Reports', 'Database-backed operational indicators'),
-            'ino-platform-buddypress'  => array('BuddyPress Integration', 'External social integration status'),
+            'ino-platform-buddypress'  => array('BuddyPress Integration', 'Live health, settings, consent-aware profiles and audit'),
             'ino-platform-settings'    => array('Settings', 'Platform configuration')
         );
     }
@@ -41,6 +41,8 @@ class INO_Platform_Admin {
             add_submenu_page('ino-platform', $label, $label, 'manage_options', $slug, function () use ($slug, $label) {
                 if ($slug === 'ino-platform-governance') {
                     INO_Platform_Governance::admin_page();
+                } elseif ($slug === 'ino-platform-buddypress') {
+                    INO_Platform_BuddyPress::page();
                 } else {
                     self::module($label, $slug);
                 }
@@ -209,9 +211,6 @@ class INO_Platform_Admin {
         }
         if ($slug === 'ino-platform-identity') {
             echo '<p class="ino-note">Ancestral statements are not proof of external tribal enrollment or government recognition. Evidence classification and administrative review must remain distinct.</p>';
-        }
-        if ($slug === 'ino-platform-buddypress') {
-            echo '<p class="ino-note">BuddyPress plugin detected: ' . (INO_Platform_Social::buddyPress_active() ? 'Yes' : 'No') . '. This does not verify functional integration.</p>';
         }
         echo '<p style="margin-top:24px"><a class="ino-btn ino-btn-primary" href="' . esc_url(self::module_link('ino-platform')) . '">← Return to Command Center</a></p></section></main>';
     }
