@@ -12,7 +12,7 @@
 if (!defined('ABSPATH')) { exit; }
 
 define('INO_PLATFORM_VERSION', '1.5.1-rc.1');
-define('INO_PLATFORM_SCHEMA_VERSION', INO_Platform_Release::SCHEMA_VERSION);
+define('INO_PLATFORM_SCHEMA_VERSION', '2026-10-10.1');
 define('INO_PLATFORM_PATH', plugin_dir_path(__FILE__));
 define('INO_PLATFORM_URL', plugin_dir_url(__FILE__));
 
