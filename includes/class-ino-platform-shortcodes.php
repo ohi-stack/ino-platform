@@ -151,9 +151,7 @@ class INO_Platform_Shortcodes {
     }
 
     public static function member_dashboard() {
-        // One existing authenticated, account-scoped record source; no second
-        // membership status, approval authority or private query is created.
-        return self::identity_dashboard();
+        return INO_Platform_Membership_UI::member_dashboard();
     }
 
     public static function identity_dashboard() {
