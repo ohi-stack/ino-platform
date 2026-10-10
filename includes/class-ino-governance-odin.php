@@ -197,6 +197,8 @@ class INO_Governance_ODIN {
 
     private static function register() {
         global $wpdb;
+        // Validate user-provided draft fields before opening the database transaction.
+        $draft=self::draft_data(0,1);
         $id='INO-ODIN-'.strtoupper(str_replace('-','',wp_generate_uuid4()));
         $wpdb->query('START TRANSACTION');
         if (!$wpdb->insert(self::table('records'),array(
@@ -205,8 +207,8 @@ class INO_Governance_ODIN {
             $wpdb->query('ROLLBACK'); self::fail('Registry ID allocation failed.',409);
         }
         $record_id=(int)$wpdb->insert_id;
-        $data=self::draft_data($record_id,1);
-        if (!$wpdb->insert(self::table('versions'),$data)) {
+        $draft['record_id']=$record_id;
+        if (!$wpdb->insert(self::table('versions'),$draft)) {
             $wpdb->query('ROLLBACK');self::fail('Initial version not stored.',409);
         }
         $version_id=(int)$wpdb->insert_id;
@@ -217,6 +219,8 @@ class INO_Governance_ODIN {
     private static function revise() {
         global $wpdb;
         $id=self::number('record_id');
+        // Validate before locking the registry row, avoiding early wp_die in a transaction.
+        $draft=self::draft_data($id,1);
         $wpdb->query('START TRANSACTION');
         self::record($id,true);
         $t=self::table('versions');
@@ -225,8 +229,8 @@ class INO_Governance_ODIN {
             $wpdb->query('ROLLBACK');
             self::fail('Finish or withdraw the existing draft/reviewed version before creating another.',409);
         }
-        $data=self::draft_data($id,(int)$previous->version_no+1);
-        if (!$wpdb->insert($t,$data)) {
+        $draft['version_no']=(int)$previous->version_no+1;
+        if (!$wpdb->insert($t,$draft)) {
             $wpdb->query('ROLLBACK');self::fail('Revision could not be stored.',409);
         }
         $version_id=(int)$wpdb->insert_id;
@@ -418,6 +422,15 @@ class INO_Governance_ODIN {
         $t=self::table('events');
         return $wpdb->get_results($wpdb->prepare(
             "SELECT record_id,version_id,event_key,actor_id,note,occurred_at
+             FROM {$t} ORDER BY id DESC LIMIT %d",(int)$limit
+        ));
+    }
+
+    public static function admin_evidence($limit=80) {
+        global $wpdb;
+        $t=self::table('evidence');
+        return $wpdb->get_results($wpdb->prepare(
+            "SELECT version_id,witness_user_id,evidence_ref,attestation,created_at
              FROM {$t} ORDER BY id DESC LIMIT %d",(int)$limit
         ));
     }
