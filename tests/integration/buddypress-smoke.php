@@ -30,6 +30,12 @@ $insert=$wpdb->insert($wpdb->prefix.'ino_members',array(
 ));
 ino_bp_test((bool)$insert, 'synthetic consented membership record inserted');
 ino_bp_test(INO_Platform_BuddyPress::can_connect_target($viewer->ID), 'approved opted-in target allowed');
+$revoked=$wpdb->insert($wpdb->prefix.'ino_members',array(
+    'user_id'=>$viewer->ID,'member_id'=>'INO-STAGE-BP-002',
+    'status'=>'Pending','public_consent'=>0
+));
+ino_bp_test((bool)$revoked, 'synthetic later membership status stored');
+ino_bp_test(!INO_Platform_BuddyPress::can_connect_target($viewer->ID), 'newest membership opt-out revokes prior connection eligibility');
 ino_bp_test(!INO_Platform_BuddyPress::can_connect_target($outsider->ID), 'unapproved profile rejected');
 ino_bp_test(!INO_Platform_BuddyPress::can_connect_target(99999999), 'nonexistent target rejected');
 $link=INO_Platform_BuddyPress::profile_link($viewer->ID);
