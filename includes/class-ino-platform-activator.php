@@ -137,6 +137,7 @@ class INO_Platform_Activator {
             'ino-document-registry' => array('INO Document Registry','[ino_documents]'),
             'ino-governance' => array('INO Governance','[ino_governance]'),
             'ino-governance-operations' => array('INO Governance Operations','[ino_governance_operations]'),
+            'ino-member-dashboard' => array('INO Member Dashboard','[ino_member_dashboard]'),
             'ino-odin-registry' => array('ODIN Public Registry','[ino_odin_registry]'),
             'ino-odin-verify' => array('Verify ODIN Record','[ino_odin_verify]'),
             'ino-odin-timeline' => array('ODIN Historical Timeline','[ino_odin_timeline]'),
