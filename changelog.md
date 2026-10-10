@@ -1,3 +1,13 @@
+## 1.5.2-rc.1 — BuddyPress Integration Upgrade
+
+- Replaced the BuddyPress Integration placeholder with an operational WordPress admin workspace at `ino-platform-buddypress`.
+- Added component/runtime health checks, stored diagnostics, opt-in private profile tab, media and friend-request settings, member ID alignment, and administrative audit.
+- Enforced approved-public-directory consent before new connection requests.
+- Prevented implicit exposure of private INO identity and genealogy data via BuddyPress xProfile or cross-user profile tabs.
+- Added real BuddyPress-on-WordPress integration smoke tests to staging CI, including nonce and role restrictions.
+- Kept canonical 1.5.x membership, governance and ODIN data model; no duplicate users or bulk export.
+- WP host integration and BuddyPress global directory privacy require separate staging acceptance.
+
 # INO Platform Plugin Changelog
 
 ## 1.5.1-rc.1 — Production-target package, NOT live-approved
