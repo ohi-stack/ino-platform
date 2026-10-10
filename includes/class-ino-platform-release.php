@@ -55,7 +55,6 @@ final class INO_Platform_Release {
         INO_Governance_Operations::install();
         INO_Governance_ODIN::install();
         INO_Platform_Voting::install();
-        INO_Platform_Voting::install();
         update_option('ino_platform_schema_version',self::SCHEMA_VERSION,false);
     }
 
@@ -69,6 +68,7 @@ final class INO_Platform_Release {
         INO_Platform_Governance::maybe_install();
         INO_Governance_Operations::install();
         INO_Governance_ODIN::install();
+        INO_Platform_Voting::install();
         update_option('ino_platform_schema_version',self::SCHEMA_VERSION,false);
     }
 
