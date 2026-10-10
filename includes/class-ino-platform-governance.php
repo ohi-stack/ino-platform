@@ -347,6 +347,7 @@ class INO_Platform_Governance {
         $html .= '<div class="ino-gov-public-grid">';
         foreach (array(
             array('Constitution Registry','/ino-constitution/','Review published constitutional versions'),
+            array('Proposed Governance Clarification','/ino-governance-clarification/','Review an unadopted proposal and attributed international source records'),
             array('Organizational Structure','/ino-governance-structure/','Explore documented INO office structures'),
             array('Public Governance Records','/ino-public-records/','Browse published institutional record summaries'),
             array('ODIN Document Registry','/ino-odin-registry/','Browse source-linked public document versions and history')
