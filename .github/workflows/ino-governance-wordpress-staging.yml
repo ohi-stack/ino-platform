@@ -92,6 +92,10 @@ jobs:
         run: |
           set -euo pipefail
           wp eval-file tests/integration/membership-ui-smoke.php --path="$WP_ROOT"
+          if wp eval-file tests/integration/membership-admin-denied.php --path="$WP_ROOT" --quiet; then
+            echo "::error::Unauthorized member was allowed into private membership roster"
+            exit 1
+          fi
       - name: Build single installable INO plugin ZIP
         if: success()
         run: |
