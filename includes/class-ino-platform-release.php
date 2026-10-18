@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) { exit; }
  * Never silently migrate or replace the separate INO Suite package.
  */
 final class INO_Platform_Release {
-    const SCHEMA_VERSION = '2026-10-18.1';
+    const SCHEMA_VERSION = '2026-10-18.2';
 
     public static function conflicting_plugins() {
         $candidates=array(
@@ -56,6 +56,7 @@ final class INO_Platform_Release {
         INO_Governance_ODIN::install();
         INO_Platform_Voting::install();
         INO_Platform_Genealogy::install();
+        INO_Platform_Documents::install();
         update_option('ino_platform_schema_version',self::SCHEMA_VERSION,false);
     }
 
@@ -71,6 +72,7 @@ final class INO_Platform_Release {
         INO_Governance_ODIN::install();
         INO_Platform_Voting::install();
         INO_Platform_Genealogy::install();
+        INO_Platform_Documents::install();
         update_option('ino_platform_schema_version',self::SCHEMA_VERSION,false);
     }
 
