@@ -5,6 +5,7 @@ define('ABSPATH',__DIR__.'/');
 class INO_Test_WPDB {
     public $posts='wp_posts';
     public function prepare($sql) { return $sql; }
+    public function esc_like($term) { return $term; }
     public function get_results($sql) {
         return array((object)array('ID'=>23,'post_title'=>'Test Portal','post_name'=>'test-portal',
             'post_status'=>'publish','post_content'=>'[ino_portal]'),
