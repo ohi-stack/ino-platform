@@ -30,3 +30,5 @@
 @media(max-width:900px){.ino-doc-stats{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:600px){.ino-doc-stats{grid-template-columns:1fr 1fr}.ino-doc-stats>div{padding:13px}.ino-doc-fields{grid-template-columns:1fr}.ino-doc-admin .widefat{font-size:12px}}
 @media(prefers-reduced-motion:reduce){.ino-doc-admin *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+.ino-doc-admin .ino-doc-fields label input[type="checkbox"]{display:inline-block;width:auto;max-width:none;vertical-align:middle;margin:0 8px 0 0}
