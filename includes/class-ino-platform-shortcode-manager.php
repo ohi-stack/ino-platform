@@ -132,6 +132,17 @@ final class INO_Platform_Shortcode_Manager {
     }
 
     /**
+     * A removed module can leave literal [ino_...] tags in page content.
+     * WordPress has_shortcode() only recognizes active registered tags, so
+     * retain a narrow literal fallback to report those orphaned assignments.
+     */
+    private static function contains_shortcode($content,$tag) {
+        if(strpos($content,'['.$tag)===false){return false;}
+        if(shortcode_exists($tag) && has_shortcode($content,$tag)){return true;}
+        return preg_match('/(?<!\\[)\\['.preg_quote($tag,'/').'(?=[\\s\\/\\]])/', $content)===1;
+    }
+
+    /**
      * Page assignments are a read-only index of literal shortcode usage in
      * native wp_posts.post_content. It intentionally does not execute tags.
      * Scan bounded to 2,000 matching pages; warn if some are unscanned.
@@ -152,7 +163,7 @@ final class INO_Platform_Shortcode_Manager {
         foreach(array_slice($pages,0,2000) as $page){
             $content=(string)$page->post_content;
             foreach($tags as $tag){
-                if(strpos($content,'['.$tag)===false || !has_shortcode($content,$tag)){continue;}
+                if(!self::contains_shortcode($content,$tag)){continue;}
                 $found[$tag][]=array('id'=>(int)$page->ID,'title'=>(string)$page->post_title,
                     'status'=>(string)$page->post_status,'slug'=>(string)$page->post_name);
             }
