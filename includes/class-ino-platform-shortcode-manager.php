@@ -85,14 +85,8 @@ final class INO_Platform_Shortcode_Manager {
     }
 
     public static function init() {
-        add_action('admin_menu',array(__CLASS__,'menu'),30);
         add_action('admin_enqueue_scripts',array(__CLASS__,'assets'));
         add_action('admin_post_ino_shortcode_report',array(__CLASS__,'export'));
-    }
-
-    public static function menu() {
-        add_submenu_page('ino-platform','Shortcode Manager','Shortcode Manager','manage_options',
-            self::SLUG,array(__CLASS__,'page'));
     }
 
     public static function assets($hook) {
