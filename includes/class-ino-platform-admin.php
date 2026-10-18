@@ -48,6 +48,8 @@ class INO_Platform_Admin {
                     INO_Platform_BuddyPress::page();
                 } elseif ($slug === 'ino-platform-voting') {
                     INO_Platform_Voting::admin_page();
+                } elseif ($slug === 'ino-platform-documents') {
+                    INO_Platform_Documents::page();
                 } else {
                     self::module($label, $slug);
                 }
@@ -57,6 +59,11 @@ class INO_Platform_Admin {
 
     public static function assets($hook) {
         if (strpos((string) $hook, 'ino-platform') === false && strpos((string) $hook, 'ino-governance') === false) { return; }
+        if (isset($_GET['page']) && in_array(sanitize_key(wp_unslash($_GET['page'])),array('ino-platform-documents','ino-documents-workspace'),true)) {
+            $doc_css = 'assets/css/ino-documents-admin.css';
+            wp_enqueue_style('ino-documents-admin',INO_PLATFORM_URL.$doc_css,array(),
+                file_exists(INO_PLATFORM_PATH.$doc_css)?(string)filemtime(INO_PLATFORM_PATH.$doc_css):INO_PLATFORM_VERSION);
+        }
         $style = 'assets/css/ino-admin-command.css';
         $script = 'assets/js/ino-admin-command.js';
         wp_enqueue_style(
