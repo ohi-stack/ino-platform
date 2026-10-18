@@ -82,11 +82,11 @@ final class INO_Platform_Genealogy {
         return $person && $person->life_status === 'deceased' && $person->visibility === 'public';
     }
     private static function input($key,$max=190) {
-        return isset($_POST[$key]) && is_string($_POST[$key]) ? mb_substr(sanitize_text_field(wp_unslash($_POST[$key])),0,$max) : '';
+        return isset($_POST[$key]) && is_string($_POST[$key]) ? substr(sanitize_text_field(wp_unslash($_POST[$key])),0,$max) : '';
     }
     private static function notes() {
         return isset($_POST['evidence_notes']) && is_string($_POST['evidence_notes'])
-            ? mb_substr(sanitize_textarea_field(wp_unslash($_POST['evidence_notes'])),0,4000) : '';
+            ? substr(sanitize_textarea_field(wp_unslash($_POST['evidence_notes'])),0,4000) : '';
     }
     private static function go($message) {
         $back=wp_get_referer() ?: home_url('/family-tree/');
@@ -231,7 +231,7 @@ final class INO_Platform_Genealogy {
         } else {
             $html.='<div class="ino-g-people">';
             foreach ($people as $person) {
-                $html.='<article class="ino-g-person"><span class="ino-g-avatar" aria-hidden="true">'.esc_html(mb_substr($person->full_name,0,1)).'</span><div><h3>'.esc_html($person->full_name).'</h3><p>'.esc_html(trim($person->born.' — '.$person->died,' —') ?: 'Dates not added').'</p><p>'.esc_html($person->place).'</p><div class="ino-g-tags"><span>'.esc_html(ucfirst($person->verification)).'</span><span>'.esc_html(ucfirst($person->visibility)).'</span><span>'.esc_html(ucfirst($person->life_status)).'</span></div><a class="ino-g-small-link" href="'.esc_url(add_query_arg('edit_person',(int)$person->id,remove_query_arg('ino_g_message'))).'#ino-add-person">Edit person</a></div></article>';
+                $html.='<article class="ino-g-person"><span class="ino-g-avatar" aria-hidden="true">'.esc_html(substr($person->full_name,0,1)).'</span><div><h3>'.esc_html($person->full_name).'</h3><p>'.esc_html(trim($person->born.' — '.$person->died,' —') ?: 'Dates not added').'</p><p>'.esc_html($person->place).'</p><div class="ino-g-tags"><span>'.esc_html(ucfirst($person->verification)).'</span><span>'.esc_html(ucfirst($person->visibility)).'</span><span>'.esc_html(ucfirst($person->life_status)).'</span></div><a class="ino-g-small-link" href="'.esc_url(add_query_arg('edit_person',(int)$person->id,remove_query_arg('ino_g_message'))).'#ino-add-person">Edit person</a></div></article>';
             }
             $html.='</div>';
         }
@@ -247,6 +247,24 @@ final class INO_Platform_Genealogy {
             $html.=self::form_open('delete_link','ino-g-inline').'<input type="hidden" name="link_id" value="'.(int)$link->id.'"><button type="submit" class="ino-g-text-button">Delete connection</button></form></div>';
         }
         $html.='</div>';
+        // Preserve existing approved member relationships without exposing pending
+        // requests or auto-migrating member profiles into ancestor records.
+        global $wpdb;
+        $legacy=$wpdb->get_results($wpdb->prepare(
+            "SELECT person_a,person_b,relationship_type FROM {$wpdb->prefix}ino_family_relationships WHERE (person_a=%d OR person_b=%d) AND status='approved' ORDER BY created_at DESC LIMIT 100",
+            $owner,$owner
+        ));
+        if ($legacy) {
+            $html.='<div class="ino-g-panel"><h2>Existing approved INO member relationships</h2><p class="ino-g-muted">These are legacy member connections. They remain private and are not part of your publicly shared ancestor tree.</p>';
+            foreach ($legacy as $item) {
+                $other=(int)$item->person_a===$owner ? (int)$item->person_b : (int)$item->person_a;
+                $relative=get_userdata($other);
+                if ($relative) {
+                    $html.='<p><strong>'.esc_html($relative->display_name).'</strong> — '.esc_html(ucwords(str_replace('_',' ',$item->relationship_type))).' (approved INO relationship)</p>';
+                }
+            }
+            $html.='</div>';
+        }
         $edit=isset($_GET['edit_person']) ? self::owned_person(absint($_GET['edit_person']),$owner) : null;
         $html.='<div class="ino-g-columns"><div class="ino-g-panel" id="ino-add-person"><h2>'.($edit?'Edit person':'Add a person').'</h2><p class="ino-g-muted">Living and unknown-status people are always kept private. Public visibility is only offered for deceased records.</p>';
         $html.=self::form_open('save_person').'<input type="hidden" name="person_id" value="'.(int)($edit->id??0).'"><label>Full name <input name="full_name" maxlength="190" required value="'.esc_attr($edit->full_name??'').'" placeholder="Name as recorded"></label><div class="ino-g-two"><label>Born (exact or approximate)<input name="born" maxlength="80" value="'.esc_attr($edit->born??'').'" placeholder="c. 1890"></label><label>Died (if known)<input name="died" maxlength="80" value="'.esc_attr($edit->died??'').'" placeholder="1955"></label></div><label>Place or locality<input name="place" maxlength="190" value="'.esc_attr($edit->place??'').'" placeholder="Stamford, Connecticut"></label><div class="ino-g-two"><label>Life status<select name="life_status"><option value="unknown">Unknown</option>';
