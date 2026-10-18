@@ -107,6 +107,8 @@ final class INO_Platform_Documents {
         add_action('admin_post_ino_doc_csv',array(__CLASS__,'export_csv'));
         add_shortcode('ino_documents',array(__CLASS__,'public_records'));
         add_shortcode('ino_documents_registry',array(__CLASS__,'public_records'));
+        add_action('admin_menu',array(__CLASS__,'menu'),40);
+        add_action('admin_enqueue_scripts',array(__CLASS__,'admin_assets'));
     }
     public static function install() {
         global $wpdb;require_once ABSPATH.'wp-admin/includes/upgrade.php';
@@ -154,6 +156,17 @@ final class INO_Platform_Documents {
             KEY doc_time (document_id,happened_at),
             KEY actor_id (actor_id)
         ) $cc;");
+        $roles=array(
+            'ino_records_officer'=>array('read'=>true,'ino_documents_access'=>true,'ino_documents_manage'=>true),
+            'ino_records_reviewer'=>array('read'=>true,'ino_documents_access'=>true,'ino_documents_review'=>true),
+            'ino_records_publisher'=>array('read'=>true,'ino_documents_access'=>true,'ino_documents_publish'=>true)
+        );
+        foreach($roles as $slug=>$caps){
+            if(!get_role($slug)){add_role($slug,ucwords(str_replace('_',' ',$slug)),$caps);}
+            $role=get_role($slug);if($role){foreach($caps as $cap=>$allowed){if($allowed){$role->add_cap($cap);}}}
+        }
+        $admin=get_role('administrator');
+        if($admin){foreach(array('ino_documents_access','ino_documents_manage','ino_documents_review','ino_documents_publish') as $cap){$admin->add_cap($cap);}}
         update_option('ino_documents_schema',self::SCHEMA,false);
         // Deliberately DO NOT seed checklist items as existing or adopted documents.
     }
@@ -167,7 +180,8 @@ final class INO_Platform_Documents {
             'action'=>$action,'before_status'=>$before,'after_status'=>$after,'notes'=>substr($note,0,500),'happened_at'=>current_time('mysql')));
     }
     private static function redirect($message,$id=0) {
-        $url=admin_url('admin.php?page=ino-platform-documents');
+        $slug=current_user_can('manage_options')?'ino-platform-documents':'ino-documents-workspace';
+        $url=admin_url('admin.php?page='.$slug);
         wp_safe_redirect(add_query_arg(array('doc_notice'=>$message,'doc_id'=>$id?:null),$url));exit;
     }
     private static function input($name,$length=190) {
@@ -273,6 +287,16 @@ final class INO_Platform_Documents {
            .wp_nonce_field('ino_doc_transition','_wpnonce',true,false)
            .'<button class="'.esc_attr($class).'" type="submit" title="'.esc_attr($note).'">'.esc_html($label).'</button></form>';
     }
+    public static function menu() {
+        add_menu_page('INO Documents','INO Documents','ino_documents_access','ino-documents-workspace',array(__CLASS__,'page'),'dashicons-media-document',24);
+    }
+    public static function admin_assets($hook) {
+        if(strpos((string)$hook,'ino-documents-workspace')===false &&
+           strpos((string)$hook,'ino-platform-documents')===false){return;}
+        $css='assets/css/ino-documents-admin.css';
+        wp_enqueue_style('ino-documents-admin',INO_PLATFORM_URL.$css,array(),
+            file_exists(INO_PLATFORM_PATH.$css)?(string)filemtime(INO_PLATFORM_PATH.$css):INO_PLATFORM_VERSION);
+    }
     public static function page() {
         if(!(self::can('manage')||self::can('review')||self::can('publish'))){wp_die('Access denied',403);}
         global $wpdb;
@@ -312,7 +336,7 @@ final class INO_Platform_Documents {
             }
             echo '</tbody></table></details>';
         }
-        echo '<h2>2. Document register</h2><form method="get" class="ino-doc-filter"><input type="hidden" name="page" value="ino-platform-documents"><label>Search <input name="doc_search" value="'.esc_attr($search).'" placeholder="Document title"></label><label>Category <select name="category"><option value="">All categories</option>';
+        echo '<h2>2. Document register</h2><form method="get" class="ino-doc-filter"><input type="hidden" name="page" value="'.esc_attr(current_user_can('manage_options')?'ino-platform-documents':'ino-documents-workspace').'"><label>Search <input name="doc_search" value="'.esc_attr($search).'" placeholder="Document title"></label><label>Category <select name="category"><option value="">All categories</option>';
         foreach(self::categories() as $cat=>$v){echo '<option '.selected($category_filter,$cat,false).' value="'.esc_attr($cat).'">'.esc_html($cat).'</option>';}
         echo '</select></label><label>Status <select name="doc_status"><option value="">All statuses</option>';
         foreach(self::statuses() as $st=>$label){echo '<option '.selected($status_filter,$st,false).' value="'.esc_attr($st).'">'.esc_html($label).'</option>';}
