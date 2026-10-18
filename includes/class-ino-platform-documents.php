@@ -205,6 +205,7 @@ final class INO_Platform_Documents {
             'updated_at'=>current_time('mysql'),'updated_by'=>get_current_user_id());
         if($old) {
             $data['status']='draft';
+            if (!(int)$old->created_by) { $data['created_by']=get_current_user_id(); }
             $ok=$wpdb->update($wpdb->prefix.'ino_documents',$data,array('id'=>$id));
             if($ok===false){self::redirect('db_error',$id);}
             self::log($id,'revised',$old->status,'draft','Existing review invalidated by revision');
@@ -228,7 +229,7 @@ final class INO_Platform_Documents {
         $dest='';
         if($action==='submit' && self::can('manage') && in_array($current,array('draft','returned'),true)){$dest='in_review';}
         if($action==='return' && self::can('review') && $current==='in_review' && (int)$old->created_by!==get_current_user_id()){$dest='returned';}
-        if($action==='review' && self::can('review') && $current==='in_review' && (int)$old->created_by!==get_current_user_id()){$dest='reviewed';}
+        if($action==='review' && self::can('review') && $current==='in_review' && (int)$old->created_by!==get_current_user_id() && trim((string)$old->source_reference)!==''){$dest='reviewed';}
         if($action==='publish' && self::can('publish') && $current==='reviewed' && $old->confidentiality==='public' &&
            (int)$old->created_by!==get_current_user_id() && (int)$old->reviewed_by!==get_current_user_id()){$dest='published';}
         if($action==='archive' && self::can('publish') && $current==='published'){$dest='archived';}
