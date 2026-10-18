@@ -7,7 +7,10 @@ class INO_Test_WPDB {
     public function prepare($sql) { return $sql; }
     public function get_results($sql) {
         return array((object)array('ID'=>23,'post_title'=>'Test Portal','post_name'=>'test-portal',
-            'post_status'=>'publish','post_content'=>'[ino_portal]'));
+            'post_status'=>'publish','post_content'=>'[ino_portal]'),
+            (object)array('ID'=>24,'post_title'=>'Removed Member Handler',
+            'post_name'=>'orphan-shortcode','post_status'=>'draft',
+            'post_content'=>'[ino_member_dashboard]'));
     }
 }
 function shortcode_exists($tag) {
@@ -15,7 +18,7 @@ function shortcode_exists($tag) {
     return isset($shortcode_tags[$tag]);
 }
 function has_shortcode($content,$tag) {
-    return strpos($content,'['.$tag.']')!==false;
+    return shortcode_exists($tag) && strpos($content,'['.$tag.']')!==false;
 }
 function expect_ino($predicate,$description) {
     if(!$predicate){fwrite(STDERR,"FAILED: ".$description."\n");exit(1);}
@@ -51,7 +54,8 @@ expect_ino($data['rows']['ino_portal']['owner']==='Closure','owner reported with
 expect_ino($data['rows']['ino_portal']['overridden']===true,'handler collision reported');
 expect_ino(count($data['rows']['ino_portal']['pages'])===1,'page placement observed');
 expect_ino($data['rows']['ino_member_dashboard']['registered']===false,'missing handler reported');
-expect_ino(count($data['rows']['ino_member_dashboard']['pages'])===0,'unassigned state observed');
+expect_ino(count($data['rows']['ino_member_dashboard']['pages'])===1,'orphaned shortcode assignment remains visible after handler removal');
+expect_ino($data['rows']['ino_member_dashboard']['pages'][0]['status']==='draft','draft page assignment status visible');
 expect_ino($data['rows']['ino_extra_test']['maturity']==='unknown','unknown maturity not certified');
 expect_ino($data['partial']===false,'bounded index complete');
 echo "INO shortcode manifest and handler/page placement smoke passed.\n";
