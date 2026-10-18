@@ -18,6 +18,7 @@ class INO_Platform_Admin {
             'ino-platform-grants'      => array('Treasury & Grants', 'Funding opportunities and award administration'),
             'ino-platform-housing'     => array('Housing Projects', 'Housing and site planning records'),
             'ino-platform-documents'   => array('Documents', 'Institutional record inventory'),
+            'ino-platform-shortcodes'  => array('Shortcode Manager', 'Runtime shortcode handlers, assigned pages, access and source-level readiness'),
             'ino-platform-governance'  => array('Governance', 'Policies, resolutions and organizational records'),
             'ino-platform-forms'       => array('Forms', 'Intake forms and submission processes'),
             'ino-platform-reports'     => array('Reports', 'Database-backed operational indicators'),
@@ -50,6 +51,8 @@ class INO_Platform_Admin {
                     INO_Platform_Voting::admin_page();
                 } elseif ($slug === 'ino-platform-documents') {
                     INO_Platform_Documents::page();
+                } elseif ($slug === 'ino-platform-shortcodes') {
+                    INO_Platform_Shortcode_Manager::page();
                 } else {
                     self::module($label, $slug);
                 }
