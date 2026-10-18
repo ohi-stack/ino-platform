@@ -436,7 +436,7 @@ final class INO_Platform_Documents {
     public static function public_records() {
         global $wpdb;
         $rows=$wpdb->get_results($wpdb->prepare("SELECT record_code,document_title,document_category,version,execution_date FROM {$wpdb->prefix}ino_documents WHERE LOWER(status)=%s AND confidentiality=%s ORDER BY published_at DESC LIMIT 50",'published','public'));
-        $html='<section class="ino-shell"><div class="ino-heading"><span>Public INO records</span><h1>Documents & Archives</h1></div><div class="ino-card-public"><p>Only specifically authorized published metadata is shown. Protected, confidential, unreviewed and historical legacy items are not displayed.</p>';
+        $html='<section class="ino-shell"><div class="ino-heading"><span>Public INO records</span><h1>Documents & Archives</h1></div><div class="ino-card-public"><p>Only specifically authorized published metadata is shown. Protected, confidential, unreviewed and historical legacy items are not displayed.</p><p><a class="ino-btn ino-btn-gold" href="'.esc_url(home_url('/documents/affidavits-and-declarations/')).'">Explore Declarations &amp; Affidavits</a></p>';
         if(!$rows){$html.='<p class="ino-notice">No records are currently approved for public listing in this module.</p>';}
         else{$html.='<ul>';foreach($rows as $r){$html.='<li><strong>'.esc_html($r->document_title).'</strong> — '.esc_html($r->document_category).' ('.esc_html($r->record_code).', version '.esc_html($r->version).')</li>';}$html.='</ul>';}
         return $html.'</div></section>';
