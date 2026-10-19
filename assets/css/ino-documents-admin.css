@@ -1,0 +1,32 @@
+/* INO Documents & Records -- institutional administrative workspace */
+.ino-doc-admin{--ino-doc-navy:#0D2B45;--ino-doc-deep:#071B2D;--ino-doc-gold:#C99A2E;--ino-doc-cream:#FAF4DF;color:#102B45;max-width:1500px}
+.ino-doc-admin *{box-sizing:border-box}
+.ino-doc-admin>h1{font-size:33px;font-weight:800;color:#071B2D;margin:25px 0 8px}
+.ino-doc-admin>p{max-width:1050px;line-height:1.6;color:#465a68}
+.ino-doc-admin>h2{margin:32px 0 10px;color:#102B45;font-size:21px}
+.ino-doc-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:25px 0}
+.ino-doc-stats>div{background:#fff;border-radius:14px;border:1px solid #dce5ea;box-shadow:0 8px 22px rgba(7,27,45,.05);padding:22px}
+.ino-doc-stats strong{display:block;color:#071B2D;font-size:29px;line-height:1.2;font-weight:800;font-variant-numeric:tabular-nums}
+.ino-doc-stats span{color:#597080;font-size:12px;line-height:1.4;display:block;margin-top:8px}
+.ino-doc-group{border-radius:12px;border:1px solid #dce3e9;overflow:hidden;margin:7px 0;background:#fff}
+.ino-doc-group>summary{list-style:disclosure-closed;cursor:pointer;padding:16px 19px;font-weight:750;color:#102B45;background:#FAF4DF}
+.ino-doc-group[open]>summary{background:#F3E7BD}
+.ino-doc-group .widefat{border:none}
+.ino-doc-group td{vertical-align:middle}
+.ino-doc-group small{color:#778692}
+.ino-doc-admin .widefat td,.ino-doc-admin .widefat th{padding:12px 13px}
+.ino-doc-admin .widefat th{background:#F1F5F7;color:#102B45}
+.ino-doc-filter{display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin:20px 0;background:#fff;padding:18px;border:1px solid #dce5ea;border-radius:13px}
+.ino-doc-filter label{font-size:13px;font-weight:700;display:flex;flex-direction:column;gap:7px}
+.ino-doc-filter input,.ino-doc-filter select{min-width:170px;width:auto;max-width:240px}
+.ino-doc-editor{margin:25px 0;background:#fff;border:1px solid #dce5ea;border-radius:17px;padding:clamp(15px,3vw,30px);scroll-margin-top:30px}
+.ino-doc-editor>h2{font-size:22px;margin:0 0 10px;color:#102B45}
+.ino-doc-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px;margin:24px 0}
+.ino-doc-fields label{display:flex;flex-direction:column;gap:6px;font-weight:750;font-size:13px}
+.ino-doc-fields input,.ino-doc-fields select,.ino-doc-fields textarea{width:100%;max-width:none;border:1px solid #b8c5cc;border-radius:8px;padding:10px;color:#152F44}
+.ino-doc-fields .ino-doc-wide{grid-column:1/-1}
+.ino-doc-note{background:#FAF4DF;border-left:4px solid #C99A2E;color:#273E50!important;border-radius:8px;padding:16px 19px;margin:20px 0}
+.ino-doc-admin :is(a,button,input,select,textarea,summary):focus-visible{outline:3px solid #A5070A;outline-offset:3px}
+@media(max-width:900px){.ino-doc-stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.ino-doc-stats{grid-template-columns:1fr 1fr}.ino-doc-stats>div{padding:13px}.ino-doc-fields{grid-template-columns:1fr}.ino-doc-admin .widefat{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.ino-doc-admin *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
