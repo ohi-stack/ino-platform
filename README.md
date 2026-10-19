@@ -1,8 +1,22 @@
 # Indigenous Nation of Onegodia — INO Platform Plugin
 
-**Version:** 1.6.0-rc.1 — production-target WordPress package, **not approved for live activation without actual-site acceptance**.  
+**Version:** 1.6.1-rc.1 — production-target WordPress package, **not approved for live activation without actual-site acceptance**.  
 **Requires:** WordPress 6.5+, PHP 7.4+, transactional InnoDB-capable MySQL/MariaDB for governance audits.  
 **Installable ZIP root:** `ino-platform/ino-platform.php` (one plugin, not a nested deployment bundle).
+
+## Membership Portal UI
+
+The improved INO Membership Portal now has three integrated, read-only views:
+
+- **Administrator:** `wp-admin/admin.php?page=ino-platform-members` — new Membership Command Center with real latest-account KPIs, approved/pending/consent stats, status bars, type/category cards, trend graphs, account-linked admin-only paginated search and record roster.
+- **Member:** `/ino-member-dashboard/` → `[ino_member_dashboard]` — account-restricted membership ID and status, declaration/relationship/ballot widgets, chart and accessible source table, recent personal activity, and member tools.
+- **Public information:** `[ino_membership]` (existing) or `[ino_membership_portal]` — introductory landing view and account sign-in pathway.
+
+Existing database state is the source of all figures. `[ino_member_dashboard]` only queries the signed-in WordPress user; no new approval or duplicate membership ledger is created. The public directory and profile now respect *the newest membership row*, including revocation of older public consent.
+
+The design features institutional navy, cream, gold, white and deep-red styling; SVG trend charts; subtle hero motion; responsive KPI tiles and tables; reduced-motion support; and a complete no-JavaScript data table fallback.
+
+**This is a presentation upgrade, not a new application/approval or ID-issuance system.** Release status and all privacy/test requirements are documented in `docs/membership-portal-ui-1.6.1.md`. The canonical plugin must not be co-activated with the legacy INO Suite.
 
 ## INO Voting & Consultation
 

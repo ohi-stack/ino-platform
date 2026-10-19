@@ -1,0 +1,63 @@
+/* INO Genealogy — scoped private-first research workspace */
+.ino-g{--ig-deep:#071B2D;--ig-navy:#0D2B45;--ig-red:#A5070A;--ig-gold:#C99A2E;--ig-pale:#FAF4DF;--ig-cream:#F3E7BD;--ig-line:#D9E0E5;--ig-ink:#102B45;max-width:1210px;margin:0 auto;padding:34px 20px 70px;color:var(--ig-ink);font-family:inherit;line-height:1.55}
+.ino-g *{box-sizing:border-box}
+.ino-g a{overflow-wrap:anywhere}
+.ino-g h1,.ino-g h2,.ino-g h3{line-height:1.15;letter-spacing:-.024em;margin:0;color:var(--ig-ink)}
+.ino-g h2{font-size:clamp(21px,2.4vw,28px)}
+.ino-g h3{font-size:17px}
+.ino-g p{margin:9px 0 13px}
+.ino-g-hero{position:relative;overflow:hidden;color:#fff;padding:clamp(28px,5vw,62px);border-radius:24px;background:radial-gradient(circle at 87% 13%,rgba(201,154,46,.26),transparent 35%),linear-gradient(125deg,#071B2D,#0D2B45 62%,#122B3B);border:1px solid rgba(201,154,46,.25)}
+.ino-g-hero:after{content:"";width:270px;height:270px;border:1px solid rgba(226,197,111,.25);border-radius:50%;position:absolute;right:-108px;top:-128px;pointer-events:none}
+.ino-g-hero h1{font-size:clamp(30px,4.6vw,54px);color:#fff;position:relative}
+.ino-g-hero p:not(.ino-g-eyebrow){color:#e5eef2;max-width:690px;font-size:16px}
+.ino-g-eyebrow{color:var(--ig-gold);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.15em;margin:0 0 10px!important}
+.ino-g-hero .ino-g-eyebrow{color:#E2C56F}
+.ino-g-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:23px;position:relative}
+.ino-g-button,.ino-g a.ino-g-button{display:inline-flex;justify-content:center;align-items:center;border:1px solid transparent;border-radius:10px;padding:12px 17px;min-height:44px;background:var(--ig-gold);color:var(--ig-deep);font:inherit;font-weight:800;font-size:14px;text-decoration:none;cursor:pointer}
+.ino-g-button:hover{filter:brightness(1.07)}
+.ino-g .ino-g-outline{color:#fff;border-color:rgba(255,255,255,.5);background:transparent}
+.ino-g :is(a,button,input,select,textarea):focus-visible{outline:3px solid var(--ig-red);outline-offset:3px}
+.ino-g-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:17px 0}
+.ino-g-stats>div{padding:21px;background:#fff;border:1px solid var(--ig-line);border-radius:14px;box-shadow:0 8px 25px rgba(7,27,45,.035)}
+.ino-g-stats strong{display:block;color:var(--ig-navy);font-size:32px;line-height:1.1;font-variant-numeric:tabular-nums}
+.ino-g-stats span{display:block;color:#526477;font-size:12px;margin-top:8px}
+.ino-g-nav{display:flex;flex-wrap:wrap;gap:7px;align-items:center;padding:11px 0 19px}
+.ino-g-nav a{padding:9px 12px;border-radius:999px;text-decoration:none;color:var(--ig-navy);background:var(--ig-pale);border:1px solid #e5d9b7;font-weight:700;font-size:12px}
+.ino-g-panel{background:#fff;border:1px solid var(--ig-line);border-radius:20px;padding:clamp(17px,3vw,29px);margin:0 0 19px;box-shadow:0 8px 29px rgba(7,27,45,.038);scroll-margin-top:30px}
+.ino-g-section-head{display:flex;justify-content:space-between;align-items:end;gap:18px;margin-bottom:19px}
+.ino-g-section-head>span{color:#607382;font-size:12px;white-space:nowrap}
+.ino-g-empty{text-align:center;max-width:570px;margin:12px auto;padding:35px 12px;color:#50677a}
+.ino-g-empty>span{font-size:35px;color:var(--ig-gold)}
+.ino-g-empty h3{color:var(--ig-navy);font-size:20px;margin-top:10px}
+.ino-g-empty p{margin:13px 0 23px}
+.ino-g-people{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.ino-g-person{display:flex;gap:14px;padding:19px;border:1px solid var(--ig-line);border-radius:15px;min-width:0;background:#fff}
+.ino-g-person>div{min-width:0}
+.ino-g-person h3{margin:2px 0 7px;overflow-wrap:anywhere}
+.ino-g-person p{font-size:12px;color:#55677a;margin:0 0 5px}
+.ino-g-avatar{background:var(--ig-pale);border:1px solid #e2c785;min-width:46px;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:var(--ig-navy);font-size:21px;font-weight:850}
+.ino-g-tags{display:flex;gap:6px;flex-wrap:wrap;margin:11px 0}
+.ino-g-tags span{font-weight:700;font-size:10px;border-radius:999px;background:var(--ig-pale);padding:4px 9px;border:1px solid #e9dfbd;color:#5c4b28}
+.ino-g-small-link,.ino-g .ino-g-text-button{background:none;border:0;padding:5px 4px;color:var(--ig-navy);text-decoration:underline;font-size:12px;font-weight:700;cursor:pointer}
+.ino-g .ino-g-text-button{min-height:30px}
+.ino-g-link{padding:20px 4px;border-top:1px solid var(--ig-line)}
+.ino-g-link>div:first-child{display:flex;align-items:center;flex-wrap:wrap;gap:10px}
+.ino-g-relation{font-size:12px;padding:5px 12px;border-radius:10px;background:var(--ig-navy);color:#fff}
+.ino-g-source{font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere}
+.ino-g-inline{display:inline-flex;gap:7px;align-items:center;margin-right:8px}
+.ino-g-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.ino-g-columns>.ino-g-panel{height:fit-content}
+.ino-g-form:not(.ino-g-inline){display:grid;gap:14px;margin:17px 0 9px}
+.ino-g-form label{display:block;color:var(--ig-navy);font-size:13px;font-weight:800}
+.ino-g-form :is(input,select,textarea){display:block;width:100%;max-width:100%;border:1px solid #b8c7d0;border-radius:9px;padding:11px 12px;background:#fff;color:#102B45;margin-top:7px;font:inherit;font-weight:400}
+.ino-g-form input:focus,.ino-g-form select:focus,.ino-g-form textarea:focus{border-color:var(--ig-navy)}
+.ino-g-two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ino-g-muted,.ino-g-disclosure{color:#566b7a;font-size:13px}
+.ino-g-disclosure{padding:12px 5px}
+.ino-g-alert{padding:12px 16px;background:var(--ig-pale);border-left:4px solid var(--ig-gold);border-radius:8px}
+.ino-g-public-person{border-top:1px solid var(--ig-line);padding:14px 0}
+.ino-g-public-person span{color:#667785;font-size:13px;margin-left:8px}
+.ino-g-public-person p{font-size:12px;color:#667785}
+@media(max-width:780px){.ino-g-stats{grid-template-columns:repeat(2,1fr)}.ino-g-people,.ino-g-columns{grid-template-columns:1fr}.ino-g{padding:16px 12px 40px}.ino-g-section-head{align-items:start}.ino-g-hero{border-radius:15px}}
+@media(max-width:450px){.ino-g-two{grid-template-columns:1fr}.ino-g-stats strong{font-size:27px}.ino-g-nav a{padding:7px 10px}}
+@media(prefers-reduced-motion:reduce){.ino-g *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
