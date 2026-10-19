@@ -107,8 +107,8 @@ jobs:
           grep -Fq "ino_platform_schema_version" includes/class-ino-platform-release.php
           grep -Fq "ino_member_dashboard" includes/class-ino-platform-shortcodes.php
           grep -Fq "ino-member-dashboard" includes/class-ino-platform-activator.php
-          grep -Fq "Version: 1.6.1-rc.1" ino-platform.php
-          grep -Fq "define('INO_PLATFORM_VERSION', '1.6.1-rc.1')" ino-platform.php
+          grep -Fq "Version: 1.6.2-rc.1" ino-platform.php
+          grep -Fq "define('INO_PLATFORM_VERSION', '1.6.2-rc.1')" ino-platform.php
 
       - name: Verify BuddyPress Bridge integration contracts
         run: |
@@ -138,7 +138,21 @@ jobs:
           grep -Fq 'ino_voting' includes/class-ino-platform-voting.php
           grep -Fq 'results_policy' includes/class-ino-platform-voting.php
           grep -Fq 'prefers-reduced-motion:reduce' assets/css/ino-voting.css
-          grep -Fq "Version: 1.6.1-rc.1" ino-platform.php
+          grep -Fq "Version: 1.6.2-rc.1" ino-platform.php
+
+      - name: Verify private-first genealogy contracts
+        run: |
+          set -euo pipefail
+          test -s includes/class-ino-platform-genealogy.php
+          test -s assets/css/ino-genealogy.css
+          test -s docs/genealogy-workspace-1.6.2.md
+          grep -Fq "INO_Platform_Genealogy::init()" ino-platform.php
+          grep -Fq "INO_Platform_Genealogy::install()" includes/class-ino-platform-release.php
+          grep -Fq "wp_verify_nonce" includes/class-ino-platform-genealogy.php
+          grep -Fq "owner_id=%d" includes/class-ino-platform-genealogy.php
+          grep -Fq "life_status === 'deceased'" includes/class-ino-platform-genealogy.php
+          grep -Fq "visibility === 'public'" includes/class-ino-platform-genealogy.php
+          grep -Fq "public_consent=1" includes/class-ino-platform-buddypress.php
 
       - name: Verify INO Membership Portal presentation and privacy contract
         run: |
@@ -152,4 +166,4 @@ jobs:
           grep -Fq 'WHERE user_id=%d' includes/class-ino-platform-membership-ui.php
           grep -Fq 'View the source data table' includes/class-ino-platform-membership-ui.php
           grep -Fq 'prefers-reduced-motion:reduce' assets/css/ino-membership-ui.css
-          grep -Fq "Version: 1.6.1-rc.1" ino-platform.php
+          grep -Fq "Version: 1.6.2-rc.1" ino-platform.php
