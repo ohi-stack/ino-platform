@@ -7,7 +7,7 @@
 if (!defined('ABSPATH')) { exit; }
 
 final class INO_Platform_Documents {
-    const SCHEMA = '2026-10-18.2';
+    const SCHEMA = '2026-10-18.3';
     private static function categories() {
         return array(
             'Formation & Institutional Status' => array(
@@ -80,6 +80,14 @@ final class INO_Platform_Documents {
                 'Record Request, Correction and Disclosure Log',
                 'ODIN Record Index, Provenance and Version History',
                 'Public Notices and Publication Approval Record'
+            ),
+            'Declarations & Affidavits' => array(
+                'Identity and Personal Declaration',
+                'Ancestry and Heritage Affidavit',
+                'Religious and Ecclesiastical Declaration',
+                'Land and Conservation Declaration',
+                'Governance and Institutional Declaration',
+                'Witness and Historical Testimony / Attestation'
             )
         );
     }
@@ -130,6 +138,12 @@ final class INO_Platform_Documents {
             execution_date DATE NULL,
             confidentiality VARCHAR(30) NOT NULL DEFAULT 'restricted',
             evidence_level VARCHAR(40) NOT NULL DEFAULT 'unreviewed',
+            declaration_kind VARCHAR(30) NOT NULL DEFAULT '',
+            declaration_area VARCHAR(30) NOT NULL DEFAULT '',
+            statement_basis VARCHAR(30) NOT NULL DEFAULT '',
+            execution_method VARCHAR(30) NOT NULL DEFAULT 'unrecorded',
+            oath_reference TEXT NULL,
+            public_listing TINYINT(1) NOT NULL DEFAULT 0,
             created_by BIGINT UNSIGNED NULL,
             updated_by BIGINT UNSIGNED NULL,
             reviewed_by BIGINT UNSIGNED NULL,
@@ -210,11 +224,29 @@ final class INO_Platform_Documents {
         if($date && (!preg_match('/^\d{4}-\d{2}-\d{2}$/D',$date)||date('Y-m-d',strtotime($date))!==$date)) {
             self::redirect('invalid_date',$id);
         }
+        // Classification and execution metadata are not independent proof.
+        $kind=self::input('declaration_kind',30);
+        $areas=INO_Platform_Declarations::areas();
+        $allowed_kinds=INO_Platform_Declarations::kinds();
+        if($kind!=='' && !isset($allowed_kinds[$kind])){wp_die('Invalid declaration type',400);}
+        $area=self::input('declaration_area',30);
+        if($area!==''&&!isset($areas[$area])){wp_die('Invalid declaration subject',400);}
+        $basis=self::input('statement_basis',30);
+        if($basis!==''&&!in_array($basis,array('facts','belief','interpretation','institutional','testimony','mixed'),true)){wp_die('Invalid statement basis',400);}
+        $execution=self::input('execution_method',30);
+        if(!in_array($execution,array('unrecorded','unsigned','signed_reported','sworn_affirmed'),true)){$execution='unrecorded';}
+        if($kind!=='affidavit' && $execution==='sworn_affirmed'){$execution='unrecorded';}
+        $oath=$kind==='affidavit' && isset($_POST['oath_reference']) && is_string($_POST['oath_reference'])
+            ? substr(sanitize_textarea_field(wp_unslash($_POST['oath_reference'])),0,2000):'';
+        $public_listing=($kind!=='' && $conf==='public' && isset($_POST['public_listing']))?1:0;
+        if($kind===''){$area='';$basis='';$execution='unrecorded';$oath='';}
         $data=array('document_title'=>$title,'document_category'=>$category,'requirement_code'=>$requirement,
             'issuing_office'=>self::input('issuing_office',150),'version'=>self::input('version',40)?:'1.0',
             'description'=>isset($_POST['description'])?sanitize_textarea_field(wp_unslash($_POST['description'])):'',
             'source_reference'=>isset($_POST['source_reference'])?sanitize_textarea_field(wp_unslash($_POST['source_reference'])):'',
             'execution_date'=>$date?:null,'confidentiality'=>$conf,
+            'declaration_kind'=>$kind,'declaration_area'=>$area,'statement_basis'=>$basis,
+            'execution_method'=>$execution,'oath_reference'=>$oath,'public_listing'=>$public_listing,
             'evidence_level'=>'unreviewed','reviewed_by'=>null,'reviewed_at'=>null,
             'updated_at'=>current_time('mysql'),'updated_by'=>get_current_user_id());
         if($old) {
@@ -243,8 +275,13 @@ final class INO_Platform_Documents {
         $dest='';
         if($action==='submit' && self::can('manage') && in_array($current,array('draft','returned'),true)){$dest='in_review';}
         if($action==='return' && self::can('review') && $current==='in_review' && (int)$old->created_by!==get_current_user_id()){$dest='returned';}
-        if($action==='review' && self::can('review') && $current==='in_review' && (int)$old->created_by!==get_current_user_id() && trim((string)$old->source_reference)!==''){$dest='reviewed';}
+        $affidavit_ready=($old->declaration_kind!=='affidavit' ||
+            ($old->execution_method==='sworn_affirmed' && trim((string)$old->oath_reference)!==''));
+        if($action==='review' && self::can('review') && $current==='in_review' &&
+            (int)$old->created_by!==get_current_user_id() && trim((string)$old->source_reference)!=='' &&
+            $affidavit_ready){$dest='reviewed';}
         if($action==='publish' && self::can('publish') && $current==='reviewed' && $old->confidentiality==='public' &&
+            ($old->declaration_kind==='' || (int)$old->public_listing===1) && $affidavit_ready &&
            (int)$old->created_by!==get_current_user_id() && (int)$old->reviewed_by!==get_current_user_id()){$dest='published';}
         if($action==='archive' && self::can('publish') && $current==='published'){$dest='archived';}
         if(!$dest){self::redirect('forbidden',$id);}
@@ -353,6 +390,8 @@ final class INO_Platform_Documents {
                 echo self::post_form('review',$row->id,'Mark reviewed');echo self::post_form('return',$row->id,'Return');
             }
             if(self::can('publish') && $status==='reviewed' && $conf==='public' &&
+                ($row->declaration_kind==='' || (int)$row->public_listing===1) &&
+                ($row->declaration_kind!=='affidavit' || ($row->execution_method==='sworn_affirmed' && trim((string)$row->oath_reference)!=='')) &&
                 (int)$row->created_by!==get_current_user_id() && (int)$row->reviewed_by!==get_current_user_id()) {
                 echo self::post_form('publish',$row->id,'Publish','button button-primary');
             }
@@ -372,14 +411,32 @@ final class INO_Platform_Documents {
             foreach(self::categories() as $k=>$v){echo '<option value="'.esc_attr($k).'" '.selected($cat,$k,false).'>'.esc_html($k).'</option>';}
             echo '</select></label><label>Version<input maxlength="40" name="version" value="'.esc_attr($edit->version??'1.0').'"></label><label>Issuing office<input maxlength="150" name="issuing_office" value="'.esc_attr($edit->issuing_office??'').'" placeholder="Office of the Chief / Treasury / Records"></label><label>Execution date (if actually signed)<input name="execution_date" type="date" value="'.esc_attr($edit->execution_date??'').'"></label><label>Confidentiality <select name="confidentiality">';
             foreach(self::classification() as $k=>$label){echo '<option value="'.esc_attr($k).'" '.selected($edit->confidentiality??'restricted',$k,false).'>'.esc_html($label).'</option>';}
-            echo '</select></label><label class="ino-doc-wide">Description and record purpose<textarea name="description" rows="3">'.esc_textarea($edit->description??'').'</textarea></label><label class="ino-doc-wide">Source/provenance reference (admin only; no sensitive URL required)<textarea name="source_reference" rows="3">'.esc_textarea($edit->source_reference??'').'</textarea></label></div><button type="submit" class="button button-primary">Save as draft</button></form></section>';
+            echo '</select></label><label>Instrument type <select name="declaration_kind"><option value="">General document / not a statement</option>';
+            foreach(INO_Platform_Declarations::kinds() as $code=>$name){
+                echo '<option value="'.esc_attr($code).'" '.selected($edit->declaration_kind??'',$code,false).'>'.esc_html($name).'</option>';
+            }
+            echo '</select></label><label>Statement subject <select name="declaration_area"><option value="">Not classified</option>';
+            foreach(INO_Platform_Declarations::areas() as $code=>$subject){
+                echo '<option value="'.esc_attr($code).'" '.selected($edit->declaration_area??'',$code,false).'>'.esc_html($subject[0]).'</option>';
+            }
+            echo '</select></label><label>Statement basis <select name="statement_basis"><option value="">Not recorded</option>';
+            foreach(array('facts'=>'Personal knowledge / facts','belief'=>'Personal belief','interpretation'=>'Historical interpretation','institutional'=>'Institutional position','testimony'=>'Reported testimony','mixed'=>'Mixed') as $code=>$label){
+                echo '<option value="'.esc_attr($code).'" '.selected($edit->statement_basis??'',$code,false).'>'.esc_html($label).'</option>';
+            }
+            echo '</select></label><label>Execution evidence state <select name="execution_method">';
+            foreach(array('unrecorded'=>'Not recorded','unsigned'=>'Unsigned / draft','signed_reported'=>'Signature reported; not independently validated','sworn_affirmed'=>'Oath / affirmation reported; requires evidence review') as $code=>$label){
+                echo '<option value="'.esc_attr($code).'" '.selected($edit->execution_method??'unrecorded',$code,false).'>'.esc_html($label).'</option>';
+            }
+            echo '</select></label><label class="ino-doc-wide">Oath/affirmation source reference (protected; for affidavits)<textarea name="oath_reference" rows="2">'.esc_textarea($edit->oath_reference??'').'</textarea></label>';
+            echo '<label class="ino-doc-wide"><input type="checkbox" name="public_listing" value="1" '.checked((int)($edit->public_listing??0),1,false).'> Request listing in public Declarations &amp; Affidavits directory after review and publication</label>';
+            echo '<label class="ino-doc-wide">Description and record purpose<textarea name="description" rows="3">'.esc_textarea($edit->description??'').'</textarea></label><label class="ino-doc-wide">Source/provenance reference (admin only; no sensitive URL required)<textarea name="source_reference" rows="3">'.esc_textarea($edit->source_reference??'').'</textarea></label></div><button type="submit" class="button button-primary">Save as draft</button></form></section>';
         }
         echo '<p class="ino-doc-note">Review status records an internal administrative action only. It is not notarization, government certification, proof of Indigenous affiliation, real-property title, or external legal recognition. Export is restricted to authorized staff and must not be posted publicly.</p></div>';
     }
     public static function public_records() {
         global $wpdb;
         $rows=$wpdb->get_results($wpdb->prepare("SELECT record_code,document_title,document_category,version,execution_date FROM {$wpdb->prefix}ino_documents WHERE LOWER(status)=%s AND confidentiality=%s ORDER BY published_at DESC LIMIT 50",'published','public'));
-        $html='<section class="ino-shell"><div class="ino-heading"><span>Public INO records</span><h1>Documents & Archives</h1></div><div class="ino-card-public"><p>Only specifically authorized published metadata is shown. Protected, confidential, unreviewed and historical legacy items are not displayed.</p>';
+        $html='<section class="ino-shell"><div class="ino-heading"><span>Public INO records</span><h1>Documents & Archives</h1></div><div class="ino-card-public"><p>Only specifically authorized published metadata is shown. Protected, confidential, unreviewed and historical legacy items are not displayed.</p><p><a class="ino-btn ino-btn-gold" href="'.esc_url(home_url('/documents/affidavits-and-declarations/')).'">Explore Declarations &amp; Affidavits</a></p>';
         if(!$rows){$html.='<p class="ino-notice">No records are currently approved for public listing in this module.</p>';}
         else{$html.='<ul>';foreach($rows as $r){$html.='<li><strong>'.esc_html($r->document_title).'</strong> — '.esc_html($r->document_category).' ('.esc_html($r->record_code).', version '.esc_html($r->version).')</li>';}$html.='</ul>';}
         return $html.'</div></section>';
