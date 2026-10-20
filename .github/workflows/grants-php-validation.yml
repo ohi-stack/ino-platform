@@ -1,0 +1,40 @@
+name: INO grants source checks
+
+on:
+  pull_request:
+    paths:
+      - 'ino-platform.php'
+      - 'includes/**'
+      - 'docs/treasury-grants-integration.md'
+      - '.github/workflows/grants-php-validation.yml'
+  workflow_dispatch:
+
+jobs:
+  php-syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Lint plugin and included PHP
+        run: |
+          php -v
+          php -l ino-platform.php
+          find includes -type f -name '*.php' -print0 | xargs -0 -n 1 php -l
+      - name: Check non-destructive grants source contract
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          bootstrap = Path("ino-platform.php").read_text()
+          grants = Path("includes/class-ino-platform-grants.php").read_text()
+          assert "class-ino-platform-social.php" in bootstrap
+          assert "class-ino-platform-grants.php" in bootstrap
+          assert "INO_Platform_Grants::init();" in bootstrap
+          assert "ino_grant_projects" in grants
+          assert "ino_grant_matches" in grants
+          assert "ino_grant_applications" in grants
+          assert "ino_grant_compliance" in grants
+          assert "verification_status='Verified'" in grants
+          assert "check_admin_referer" in grants
+          assert "current_user_can" in grants
+          assert "ino_funding_schema_version" in grants
+          print("Source contracts present; WordPress staging remains necessary.")
+          PY
