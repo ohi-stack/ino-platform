@@ -18,7 +18,7 @@ jobs:
         run: |
           php -v
           php -l ino-platform.php
-          find includes -type f -name '*.php' -print -exec php -l {} \;
+          find includes -type f -name '*.php' -print0 | xargs -0 -n 1 php -l
       - name: Check non-destructive grants source contract
         run: |
           python3 - <<'PY'
