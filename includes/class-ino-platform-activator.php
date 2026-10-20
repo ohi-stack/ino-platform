@@ -159,6 +159,7 @@ class INO_Platform_Activator {
             'honor-your-ancestry' => array('Honor Your Ancestry','[ino_identity_intro]'),
             'identity-declaration' => array('Identity Declaration','[ino_identity_declaration]'),
             'identity-heritage-dashboard' => array('Identity and Heritage Dashboard','[ino_identity_dashboard]'),
+            'peoplehood-registry' => array('Identity, Ancestry & Peoplehood Registry','[ino_peoplehood_registry]'),
             'peoples-book-of-names' => array("People's Book of Names",'[ino_book_of_names]'),
             'tribal-family-archives' => array('Tribal and Family Archives','[ino_family_archives]'),
             'dual-identity-certificates' => array('Dual Identity Certificates','[ino_certificates]'),

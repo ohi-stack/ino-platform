@@ -8,9 +8,12 @@ function ino_rc_check($condition,$description) {
     if (!$condition) { WP_CLI::error('FAIL '.$description); }
     WP_CLI::log('PASS '.$description);
 }
-ino_rc_check(defined('INO_PLATFORM_VERSION') && INO_PLATFORM_VERSION==='1.6.1-rc.1','packaged release version consistent');
+ino_rc_check(defined('INO_PLATFORM_VERSION') && INO_PLATFORM_VERSION==='1.6.3-rc.1','packaged release version consistent');
 ino_rc_check(defined('INO_PLATFORM_SCHEMA_VERSION') && 
     get_option('ino_platform_schema_version')===INO_PLATFORM_SCHEMA_VERSION,'schema marker established without resetting governance');
+ino_rc_check(class_exists('INO_Platform_Peoplehood') && shortcode_exists('ino_peoplehood_registry'),'peoplehood module and private shortcode installed');
+ino_rc_check(get_option('ino_peoplehood_schema_version')===INO_Platform_Peoplehood::SCHEMA,'peoplehood schema persisted through ZIP reinstall');
+ino_rc_check((bool)get_page_by_path('peoplehood-registry'),'private peoplehood page provisioned without rewriting old pages');
 ino_rc_check(shortcode_exists('ino_member_dashboard'),'member dashboard compatibility shortcode registered');
 ino_rc_check(shortcode_exists('ino_membership_portal'),'new membership landing page shortcode registered');
 ino_rc_check(class_exists('INO_Platform_Membership_UI'),'membership admin and member UI class is available');
