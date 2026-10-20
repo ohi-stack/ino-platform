@@ -107,7 +107,7 @@ class INO_Platform_Grants {
             status varchar(60) DEFAULT 'Pre-Application',
             go_no_go varchar(20) DEFAULT 'Pending',
             requested_amount decimal(15,2) DEFAULT NULL,
-            submitted_at date DEFAULT NULL,
+            submitted_at datetime DEFAULT NULL,
             award_amount decimal(15,2) DEFAULT NULL,
             notes longtext NULL,
             created_at datetime DEFAULT CURRENT_TIMESTAMP,
@@ -269,7 +269,10 @@ class INO_Platform_Grants {
         }
         if ($kind==='opportunities') {
             // Public disclosure must be individually enabled and eligibility verified.
-            $data['is_public'] = ($data['is_public']==='1' && $data['verification_status']==='Verified') ? 1 : 0;
+            if ($data['is_public']==='1' && ($data['verification_status']!=='Verified' || empty($data['program_url']) || empty($data['eligibility_basis']) || empty($data['applicant_entity']) || $data['applicant_entity']==='Eligibility Review Required')) {
+                wp_die('Public listing requires documented eligibility, a verified record, an applicant entity, and a program source URL.', '', array('response'=>400));
+            }
+            $data['is_public'] = ($data['is_public']==='1') ? 1 : 0;
             $data['readiness_score'] = min(100,max(0,(int)$data['readiness_score']));
         }
         $table = self::table($kind);
