@@ -7,6 +7,7 @@ on:
       - 'feat/ino-buddypress-bridge-*'
       - 'feat/ino-voting-*'
       - 'feat/ino-membership-portal-ui-*'
+      - 'feat/ino-peoplehood-*'
   pull_request:
     branches:
       - 'feat/ino-odin-transparency-phase3-20261010'
@@ -96,6 +97,10 @@ jobs:
             echo "::error::Unauthorized member was allowed into private membership roster"
             exit 1
           fi
+      - name: Verify private peoplehood claims, evidence and consent
+        run: |
+          set -euo pipefail
+          wp eval-file tests/integration/peoplehood-smoke.php --path="$WP_ROOT"
       - name: Build single installable INO plugin ZIP
         if: success()
         run: |
@@ -108,6 +113,7 @@ jobs:
           test -s dist/ino-platform/includes/class-ino-platform-buddypress.php
           test -s dist/ino-platform/includes/class-ino-platform-voting.php
           test -s dist/ino-platform/includes/class-ino-platform-membership-ui.php
+          test -s dist/ino-platform/includes/class-ino-platform-peoplehood.php
           test -s dist/ino-platform/assets/css/ino-membership-ui.css
           test -s dist/ino-platform/assets/js/ino-membership-ui.js
           test -s dist/ino-platform/assets/css/ino-voting.css
@@ -118,15 +124,15 @@ jobs:
           test -s dist/ino-platform/assets/js/ino-admin-command.js
           find dist/ino-platform -type f -name '*.php' -print0 | xargs -0 -n1 php -l > dist/php-release-lint.txt
           cd dist
-          zip -q -r "INO-Platform-1.6.1-rc.1-PRODUCTION-CANDIDATE.zip" ino-platform
-          unzip -t "INO-Platform-1.6.1-rc.1-PRODUCTION-CANDIDATE.zip" | tail -1
-          sha256sum "INO-Platform-1.6.1-rc.1-PRODUCTION-CANDIDATE.zip" > plugin-SHA256.txt
+          zip -q -r "INO-Platform-1.6.3-rc.1-PRODUCTION-CANDIDATE.zip" ino-platform
+          unzip -t "INO-Platform-1.6.3-rc.1-PRODUCTION-CANDIDATE.zip" | tail -1
+          sha256sum "INO-Platform-1.6.3-rc.1-PRODUCTION-CANDIDATE.zip" > plugin-SHA256.txt
       - name: Reinstall the packaged ZIP and preserve existing governance records
         if: success()
         run: |
           set -euo pipefail
           wp plugin deactivate ino-platform --path="$WP_ROOT" --quiet
-          wp plugin install "dist/INO-Platform-1.6.1-rc.1-PRODUCTION-CANDIDATE.zip" --path="$WP_ROOT" --force --quiet
+          wp plugin install "dist/INO-Platform-1.6.3-rc.1-PRODUCTION-CANDIDATE.zip" --path="$WP_ROOT" --force --quiet
           wp plugin activate ino-platform --path="$WP_ROOT" --quiet
           wp plugin status ino-platform --path="$WP_ROOT"
           INO_ASSERT=audit wp eval-file tests/staging/assert.php --path="$WP_ROOT" --quiet
@@ -135,14 +141,15 @@ jobs:
           wp eval-file tests/release/shortcode-smoke.php --path="$WP_ROOT" --quiet
           INO_VOTE_ASSERT=audit wp eval-file tests/voting/assert.php --path="$WP_ROOT" --quiet
           wp eval-file tests/integration/membership-ui-smoke.php --path="$WP_ROOT" --quiet
+          wp eval-file tests/integration/peoplehood-smoke.php --path="$WP_ROOT" --quiet
           wp eval 'if (!INO_Platform_BuddyPress::active() || !INO_Platform_BuddyPress::enabled("profile_tab")) { WP_CLI::error("BuddyPress bridge settings lost on ZIP reinstall"); }' --path="$WP_ROOT"
       - name: Upload installable WordPress plugin
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: INO-Platform-1.6.1-rc.1-WordPress-Plugin
+          name: INO-Platform-1.6.3-rc.1-WordPress-Plugin
           path: |
-            dist/INO-Platform-1.6.1-rc.1-PRODUCTION-CANDIDATE.zip
+            dist/INO-Platform-1.6.3-rc.1-PRODUCTION-CANDIDATE.zip
             dist/plugin-SHA256.txt
             dist/php-release-lint.txt
           if-no-files-found: error

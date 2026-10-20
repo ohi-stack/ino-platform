@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) { exit; }
  * Never silently migrate or replace the separate INO Suite package.
  */
 final class INO_Platform_Release {
-    const SCHEMA_VERSION = '2026-10-18.1';
+    const SCHEMA_VERSION = '2026-10-20.1';
 
     public static function conflicting_plugins() {
         $candidates=array(
@@ -56,6 +56,7 @@ final class INO_Platform_Release {
         INO_Governance_ODIN::install();
         INO_Platform_Voting::install();
         INO_Platform_Genealogy::install();
+        INO_Platform_Peoplehood::install();
         update_option('ino_platform_schema_version',self::SCHEMA_VERSION,false);
     }
 
@@ -71,6 +72,7 @@ final class INO_Platform_Release {
         INO_Governance_ODIN::install();
         INO_Platform_Voting::install();
         INO_Platform_Genealogy::install();
+        INO_Platform_Peoplehood::install();
         update_option('ino_platform_schema_version',self::SCHEMA_VERSION,false);
     }
 
@@ -92,13 +94,13 @@ final class INO_Platform_Release {
         $sensitive_slugs=array(
             'ino-member-dashboard','identity-heritage-dashboard',
             'member-profile','member-directory','ino-member-directory',
-            'identity-declaration','family-tree',
+            'identity-declaration','family-tree','peoplehood-registry',
             'ino-governance-operations','ino-my-votes','ino-voting'
         );
         $sensitive_tags=array(
             'ino_member_dashboard','ino_identity_dashboard',
             'ino_member_profile','ino_member_directory','ino_identity_declaration',
-            'ino_family_tree','ino_governance_operations','ino_my_votes','ino_voting'
+            'ino_family_tree','ino_peoplehood_registry','ino_peoplehood_profile','ino_governance_operations','ino_my_votes','ino_voting'
         );
         $sensitive=in_array($page->post_name,$sensitive_slugs,true);
         foreach ($sensitive_tags as $tag) {
